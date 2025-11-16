@@ -36,8 +36,10 @@ pip install -r requirements.txt
 
 Create a .env file:
 
+```bash
 GOOGLE_API_KEY="your-gemini-api-key"
 OPENAI_API_KEY="your-openai-api-key"
+```
 
 ## 🗂 Structure
 westmarch-house/
