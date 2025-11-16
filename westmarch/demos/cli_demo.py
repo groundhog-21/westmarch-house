@@ -12,10 +12,10 @@ from westmarch.orchestrator.workflows import WestmarchOrchestrator
 
 
 def build_orchestrator():
-    jeeves_client = ModelClient("gemini", "jeeves-model")
-    perkins_client = ModelClient("gemini", "perkins-model")
-    pennington_client = ModelClient("gemini", "pennington-model")
-    hawthorne_client = ModelClient("openai", "hawthorne-model")
+    jeeves_client = ModelClient("Jeeves")
+    perkins_client = ModelClient("Perkins")
+    pennington_client = ModelClient("Miss Pennington")
+    hawthorne_client = ModelClient("Lady_Hawthorne")
 
     jeeves = JeevesAgent(jeeves_client)
     perkins = PerkinsAgent(perkins_client)
