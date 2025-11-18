@@ -3,7 +3,7 @@ from __future__ import annotations
 
 from typing import Any, Dict, List
 
-from westmarch.core.messages import AgentMessage, Context, TaskType
+from westmarch.core.messages import AgentMessage, Context, TaskType, Constraints
 from westmarch.agents.jeeves import JeevesAgent
 from westmarch.agents.perkins import PerkinsAgent
 from westmarch.agents.miss_pennington import MissPenningtonAgent
@@ -97,7 +97,7 @@ class WestmarchOrchestrator:
 
         return self.jeeves.run(final_msg)
 
-    def drafting_short_text(self, user_input: str) -> str:
+    def draft_short_text(self, user_input: str) -> str:
         """
         Miss Pennington drafts; Jeeves presents; Pennington archives the draft.
         """
@@ -135,6 +135,43 @@ class WestmarchOrchestrator:
 
         return self.jeeves.run(final_msg)
     
+    def parlour_discussion(self, user_input: str) -> str:
+        """
+        General conversation in the parlour:
+        - Jeeves responds in conversational mode
+        - Miss Pennington archives a short note
+        """
+        log("WORKFLOW: Parlour discussion initiated")
+
+        # ---- Ask Jeeves to reply conversationally ----
+        msg = AgentMessage(
+            sender="User",
+            recipient="Jeeves",
+            task_type=TaskType.CONVERSATION,  # << MAIN CHANGE HERE
+            content=(
+                "Please respond in your warm, courteous parlour-conversation manner:\n\n"
+                f"{user_input}"
+            ),
+            context=self._context(user_input),
+        )
+
+        jeeves_reply = self.jeeves.run(msg)
+
+        log("WORKFLOW: Parlour discussion reply generated")
+
+        # ---- Archive a short note with Miss Pennington ----
+        try:
+            self.pennington.save_note(
+                "Parlour discussion entry:\n\n"
+                f"USER SAID:\n{user_input}\n\n"
+                f"JEEVES REPLIED:\n{jeeves_reply}"
+            )
+        except Exception as e:
+            log(f"WORKFLOW: Warning – could not save parlour note to memory → {e}")
+
+        return jeeves_reply
+
+
     # ------- Memory-centric Workflow -------
 
     def summarize_user_memory(self, user_input: str | None = None) -> str:
@@ -161,42 +198,81 @@ class WestmarchOrchestrator:
         )
         return self.jeeves.run(final_msg)
     
-    def critique_text(self, text: str) -> str:
+    def memory_summary(self, user_input: str | None = None) -> str:
         """
-        Lady Hawthorne critiques the given text with her aristocratic wit.
+        Backwards-compatible wrapper so the Phase 3 UI task 'memory_summary'
+        maps to the summarize_user_memory workflow.
+        """
+        return self.summarize_user_memory(user_input)
+
+    def critique_text(self, text_to_critique: str) -> str:
+        """
+        Sends ONLY the target text to Lady Hawthorne for critique,
+        ensuring she critiques exactly what is provided — whether it
+        originates from the patron, Perkins, Pennington, or another agent.
+        
+        Jeeves then presents Her Ladyship’s response without altering content.
         """
 
         log("WORKFLOW: Critique workflow initiated")
 
-        # 1. Create the message for Lady Hawthorne
+        # --- 1. Lady Hawthorne critiques the raw target text ---
         critique_msg = AgentMessage(
-            sender=self.jeeves.name,
+            sender="System",                       # Neutral: avoids confusing role context
             recipient=self.hawthorne.name,
             task_type=TaskType.CRITIQUE,
-            content=text,
-            context=Context(
-                original_user_request=text,
-                previous_outputs=[]
-            )
+            content=(
+                "Please critique the following text with your customary aristocratic wit "
+                "and clarity. Focus strictly on the text itself:\n\n"
+                f"{text_to_critique}"
+            ),
+            context=self._context(text_to_critique),
         )
 
-        # 2. Send to Lady Hawthorne
-        log("WORKFLOW: Sending text to Lady Hawthorne for critique")
-        critique = self.hawthorne.run(critique_msg)
+        log("WORKFLOW: Sending raw text directly to Lady Hawthorne")
+        critique_output = self.hawthorne.run(critique_msg)
 
-        # 3. Allow Jeeves to compose a refined, presentable response
-        log("WORKFLOW: Passing critique to Jeeves for presentation")
-
-        summary_msg = AgentMessage(
+        # --- 2. Jeeves presents Her Ladyship’s critique without modifying it ---
+        presentation_msg = AgentMessage(
             sender="System",
             recipient=self.jeeves.name,
             task_type=TaskType.CRITIQUE,
-            content=critique,
-            context=Context(
-                original_user_request=f"Critique this text: {text}",
-                previous_outputs=[{"summary": critique}]
-            )
+            content=(
+                "Please present the following critique from Lady Hawthorne "
+                "in a courteous and refined manner:\n\n"
+                f"{critique_output}"
+            ),
+            context=self._context(text_to_critique),
         )
 
-        final_output = self.jeeves.run(summary_msg)
+        log("WORKFLOW: Passing Lady Hawthorne's critique to Jeeves for final presentation")
+
+        final_output = self.jeeves.run(presentation_msg)
         return final_output
+    
+    
+    # ------- Phase 3 UI Dispatcher -------
+    
+    def run(self, task: str, user_input: str) -> str:
+        task = task.lower()
+
+        if task == "parlour_discussion":
+            return self.parlour_discussion(user_input)
+      
+        elif task == "daily_planning":
+            return self.daily_planning(user_input)
+
+        elif task == "research":
+            return self.quick_research(user_input)
+
+        elif task == "drafting":
+            return self.draft_short_text(user_input)
+
+        elif task == "memory_summary":
+            return self.memory_summary()
+
+        elif task == "critique":
+            return self.critique_text(user_input)
+
+        else:
+            return "My apologies sir, but the household staff are quite baffled by the request."

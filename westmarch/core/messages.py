@@ -10,6 +10,7 @@ class TaskType(str, Enum):
     RESEARCH = "research"
     DRAFTING = "drafting"
     CRITIQUE = "critique"
+    CONVERSATION = "conversation"   # << NEW!
     MIXED = "mixed"
     UNKNOWN = "unknown"
 

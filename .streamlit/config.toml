@@ -1,0 +1,9 @@
+[theme]
+primaryColor = "#5b1fa6"              # Royal purple
+backgroundColor = "#ffffff"           # Main background
+secondaryBackgroundColor = "#f6f1ff"  # Sidebar / cards (soft lilac)
+textColor = "#1f1633"                 # Deep manor-ink
+font = "serif"
+
+# Note: Custom [ui] section removed - these settings don't work in Streamlit
+# Chat backgrounds are now handled via CSS in app.py
