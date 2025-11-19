@@ -1,4 +1,13 @@
-google-generativeai
-google-cloud-aiplatform
-openai
+streamlit
 python-dotenv
+google-generativeai
+openai
+google-cloud-aiplatform
+google-auth
+google-auth-oauthlib
+google-auth-httplib2
+requests
+pydantic
+fastapi
+uvicorn
+watchdog
