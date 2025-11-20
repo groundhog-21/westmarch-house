@@ -35,21 +35,73 @@ class WestmarchOrchestrator:
 
     def daily_planning(self, user_input: str) -> str:
         """
-        Jeeves plans the day. Miss Pennington stores the plan in memory.
+        Jeeves plans the day based on user input. Behavior is conditional:
+
+        - If the user provides explicit tasks and/or times, Jeeves must preserve
+        and simply format the schedule exactly as provided.
+        - If the user does NOT provide specific tasks or times, Jeeves may propose
+        a complete schedule and then ask the user if adjustments are desired.
+
+        Miss Pennington stores the resulting plan in memory.
         """
-        log("WORKFLOW: Daily planning initiated")  # <<< NEW
+
+        log("WORKFLOW: Daily planning initiated")
+
+        # Detect whether the user has already provided explicit times or structure.
+        # This is a gentle detection heuristic — if it sees times like "8:00" or "8–11".
+        import re
+        has_explicit_times = bool(
+            re.search(r"\d{1,2}[:.]\d{2}", user_input) or
+            re.search(r"\d{1,2}\s*[-–]\s*\d{1,2}", user_input)
+        )
+
+        mode_hint = (
+            "USER_PROVIDED_SCHEDULE"
+            if has_explicit_times
+            else "NEEDS_JEEVES_TO_PROPOSE_SCHEDULE"
+        )
+
+        # Intelligent, conditional instruction block for Jeeves.
+        planning_instruction = f"""
+        You are Jeeves, the Head Butler of the Westmarch Estate. You are preparing a
+        daily plan for the user. Your behaviour depends on the nature of the user's
+        request.
+
+        MODE: {mode_hint}
+
+        1) USER_PROVIDED_SCHEDULE:
+        The user has given explicit times and/or tasks. You must preserve these
+        EXACTLY. Format them clearly and elegantly.
+
+        You may, if the tone of the request implies openness (e.g. 'additions',
+        'adjust', 'improve', 'refine', or similar), offer OPTIONAL, politely worded
+        suggestions. Suggestions must never override, reorder, replace, or imply
+        error. They should be brief and optional:
+        ('If you wish, sir, you might also consider…').
+
+        Always maintain Jeeves's characteristic polish and gentle flourish.
+
+        2) NEEDS_JEEVES_TO_PROPOSE_SCHEDULE:
+        The user has not given a structured plan. Propose a complete, well-ordered
+        schedule. After presenting it, ask whether the user would like any changes.
+
+        In all modes, remain dignified, structured, and impeccably polite. Never add or
+        change tasks unless the user has invited refinement. Err on the side of clarity
+        and elegance rather than austerity.
+        """
 
         msg = AgentMessage(
             sender="System",
             recipient="Jeeves",
             task_type=TaskType.PLANNING,
-            content="Please structure the user's day with priorities.",
+            content=planning_instruction,
             context=self._context(user_input),
             constraints=Constraints(style="structured"),
         )
+
         plan = self.jeeves.run(msg)
 
-        log("WORKFLOW: Daily plan created, saving to memory")  # <<< NEW
+        log("WORKFLOW: Daily plan created, saving to memory")
 
         # Save the plan in Pennington's memory
         self.pennington.save_note(
@@ -58,6 +110,7 @@ class WestmarchOrchestrator:
         )
 
         return plan
+
 
     def quick_research(self, user_input: str) -> str:
         """

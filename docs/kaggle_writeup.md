@@ -1,5 +1,4 @@
-```markdown
-# The House of Westmarch: A Properly Staffed Agentic Estate
+# The House of Westmarch: A Fully Staffed, Mildly Unhinged Multi-agent Concierge
 
 Prepared by the Household Staff of Westmarch:  
 🎩 Jeeves · 📚 Perkins · ✒️ Miss Pennington · 🕯️ Lady Hawthorne · 👤 The Master
@@ -97,7 +96,7 @@ The Estate’s implementation follows a clear layered architecture:
    - `workflows.py` defines multi-step flows (e.g. research → draft → critique).
 
 2. **Core Services (`westmarch/core/`)**  
-   - `models.py` configures Gemini models.  
+   - `models.py` configures Gemini and OpenAI models.  
    - `memory.py` provides session and long-term memory based on a JSON store.  
    - `messages.py` defines message formats and roles.  
    - `logging.py` adds observability and basic telemetry.
@@ -123,7 +122,7 @@ This architecture cleanly separates concerns while keeping the narrative conceit
 
 ## Features Demonstrated (Course Alignment)
 
-The Estate demonstrates multiple concepts from the Agents Intensive:
+The Estate demonstrates multiple concepts from the Agents Intensive Course:
 
 - **Multi-agent system:** four distinct agents plus orchestrator.  
 - **Sequential and parallel workflows:** e.g. Perkins research → Pennington draft → Hawthorne critique.  
@@ -173,6 +172,20 @@ Practically speaking, the House of Westmarch:
 - Structures research into readable analyses.  
 - Provides humorous but useful critique for creative work.  
 - Demonstrates how multi-agent systems can be made approachable through narrative.
+
+---
+
+## Project Links
+
+In the interest of scholarly rigor and proper estate documentation, the household staff respectfully provides the following references for those who wish to inspect the inner workings of Westmarch:
+
+📜 The Estate’s Code Archives
+Meticulously organized and preserved within the public wing of the GitHub Repository:
+https://github.com/groundhog-21/westmarch-house
+
+🎞️ Motion Picture Demonstration
+A brief moving-picture account—illustrating the comportment, quarrels, and collaborative exertions of the household—is presently being prepared and shall be posted here when ready:
+YouTube link forthcoming
 
 ---
 
