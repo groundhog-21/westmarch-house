@@ -22,8 +22,6 @@ Following this, I drafted a note to our neighbours, extending a warm invitation 
 >
 >Miss Pennington
 
-“***”
-
 **Jeeves 🎩:**
 “One trusts this will prove informative, Sir.”
 

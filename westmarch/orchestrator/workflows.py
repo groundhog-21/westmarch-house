@@ -2,16 +2,14 @@
 
 from __future__ import annotations
 
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional, Set
 
 from westmarch.core.messages import AgentMessage, Context, TaskType, Constraints
 from westmarch.agents.jeeves import JeevesAgent
 from westmarch.agents.perkins import PerkinsAgent
 from westmarch.agents.miss_pennington import MissPenningtonAgent
 from westmarch.agents.lady_hawthorne import LadyHawthorneAgent
-
 from westmarch.core.logging import log
-
 
 class WestmarchOrchestrator:
     def __init__(
@@ -33,6 +31,30 @@ class WestmarchOrchestrator:
         )
 
     # ------- Tier 1 Workflows -------
+
+    # ---------------------------------------------------------
+    # For memory recall
+    # ---------------------------------------------------------
+
+    DOMAIN_KEYWORDS = {
+        "poetry": ["poem", "poetry", "verse", "stanza", "line", "couplet", "sonnet"],
+        "finance": ["finance", "invest", "investing", "investment", "stocks", "market", "fund", "etf"],
+        "gnome": ["gnome", "garden gnome", "waistcoat", "horticultural"],
+        "weather": ["weather", "forecast", "rain", "sunny", "cloudy"],
+        "schedule": ["plan", "schedule", "agenda", "appointment"],
+        "drafting": ["email", "letter", "draft", "compose", "correspondence"],
+        "research": ["research", "investigate", "analysis"],
+    }
+
+    @staticmethod
+    def infer_domains(text: str) -> set:
+        """Infer semantic domains from a block of text."""
+        t = text.lower()
+        found: set[str] = set()
+        for domain, keywords in WestmarchOrchestrator.DOMAIN_KEYWORDS.items():
+            if any(kw in t for kw in keywords):
+                found.add(domain)
+        return found
 
     def parlour_discussion(self, user_input: str) -> str:
         """
@@ -771,31 +793,165 @@ class WestmarchOrchestrator:
         )
 
         return self.jeeves.run(final_msg)
-    
+
+    # -------------------------
+    # Memory Recall – Helpers
+    # -------------------------
+
+    def _extract_memory_hints(self, user_input: str) -> Dict[str, List[str]]:
+        """
+        Very lightweight intent extractor for memory recall.
+        Returns a dict of keyword and agent hints based on the user's question.
+        """
+        text = user_input.lower().strip()
+
+        keywords: List[str] = []
+        agent_hints: List[str] = []
+        topic_hints: List[str] = []
+        time_hints: List[str] = []
+
+        # --- Topic / content hints ---
+        if "poem" in text or "verse" in text or "stanza" in text:
+            keywords.extend([
+                "poem",
+                "o languid moon",
+                "languid moon",
+            ])
+            topic_hints.append("poem")
+
+        if "gnome" in text or "garden gnome" in text:
+            keywords.extend([
+                "gnome",
+                "garden gnome",
+            ])
+            topic_hints.append("gnome")
+
+        if "letter" in text or "note" in text or "email" in text:
+            keywords.extend([
+                "letter",
+                "note",
+            ])
+            topic_hints.append("letter")
+
+        if "critique" in text or "review" in text or "what did she say" in text:
+            keywords.append("critique")
+
+        if "plan" in text or "planning" in text or "schedule" in text:
+            keywords.append("plan")
+            topic_hints.append("planning")
+
+        # --- Agent hints ---
+        if "lady hawthorne" in text or "her ladyship" in text or "lady augusta" in text:
+            agent_hints.append("lady hawthorne")
+
+        if "perkins" in text:
+            agent_hints.append("perkins")
+
+        if "miss pennington" in text or "pennington" in text:
+            agent_hints.append("miss pennington")
+
+        if "jeeves" in text:
+            agent_hints.append("jeeves")
+
+        # --- Time hints (for possible future use) ---
+        if "yesterday" in text:
+            time_hints.append("yesterday")
+        if "earlier today" in text or "earlier" in text:
+            time_hints.append("today")
+        if "last week" in text:
+            time_hints.append("last week")
+
+        return {
+            "keywords": list(dict.fromkeys(keywords)),      # de-duplicated
+            "agent_hints": list(dict.fromkeys(agent_hints)),
+            "topic_hints": list(dict.fromkeys(topic_hints)),
+            "time_hints": list(dict.fromkeys(time_hints)),
+        }
+
+    def _find_best_memory_match(
+        self,
+        hints: Dict[str, List[str]],
+        fallback_query: str,
+    ) -> Optional[Dict]:
+        """
+        Given extracted hints, scan Miss Pennington's memory entries and
+        pick the single best-matching entry using a simple scoring system.
+
+        If no hints are present, falls back to a direct text search using
+        the user's query string.
+        """
+        # If we have no useful hints at all, fall back to direct search.
+        if not (hints["keywords"] or hints["agent_hints"] or hints["topic_hints"]):
+            direct_matches = self.pennington.search_memory(fallback_query)
+            if not direct_matches:
+                return None
+            # Choose the most recent direct match
+            return max(
+                direct_matches,
+                key=lambda e: e.get("timestamp", ""),
+            )
+
+        # Otherwise, load all notes and score them
+        entries = self.pennington.load_all_notes()
+        if not entries:
+            return None
+
+        best_entry: Optional[Dict] = None
+        best_score: int = 0
+
+        for entry in entries:
+            content = entry.get("content", "")
+            lower = content.lower()
+            score = 0
+
+            # Strong matches: primary keywords
+            for kw in hints["keywords"]:
+                if kw in lower:
+                    score += 3
+
+            # Agent mentions
+            for ag in hints["agent_hints"]:
+                if ag in lower:
+                    score += 2
+
+            # Topic hints (weaker)
+            for th in hints["topic_hints"]:
+                if th in lower:
+                    score += 1
+
+            # (Optional future extension: use time_hints with timestamps)
+
+            if score <= 0:
+                continue
+
+            if score > best_score:
+                best_score = score
+                best_entry = entry
+            elif score == best_score and best_entry is not None:
+                # Tie-breaker: prefer more recent timestamp
+                ts_new = entry.get("timestamp", "")
+                ts_old = best_entry.get("timestamp", "")
+                if ts_new > ts_old:
+                    best_entry = entry
+
+        return best_entry
+
     def recall_memory(self, user_input: str) -> str:
         """
-        Jeeves retrieves past notes from Miss Pennington’s memory ledger
-        that relate to the user's query.
+        Strict domain-prioritized memory recall for Jeeves.
         """
 
         log("WORKFLOW: Memory recall initiated")
 
-        # Approval / closure detection
+        # -----------------------------------------------------
+        # 0. Closure detection
+        # -----------------------------------------------------
         lower = user_input.strip().lower()
-
         closure_phrases = [
-            "thank you",
-            "my thanks",
-            "that will do",
-            "that will suffice",
-            "very well",
-            "fine, thank you",
-            "fine thank you",
-            "excellent, thank you",
-            "alright then",
-            "okay then",
-            "appreciated",
-            "much obliged"
+            "thank you", "my thanks", "that will do", "that will suffice",
+            "very well", "fine, thank you", "fine thank you",
+            "excellent, thank you", "alright then", "okay then",
+            "appreciated", "much obliged"
         ]
 
         if any(p in lower for p in closure_phrases):
@@ -804,33 +960,90 @@ class WestmarchOrchestrator:
                 "to recover any stray reflections."
             )
 
-        query = user_input.lower().strip()
+        # -----------------------------------------------------
+        # 1. Infer domain(s) of the user query
+        # -----------------------------------------------------
+        log(f"MEMORY-RECALL: Jeeves notes the user's inquiry → '{lower}'")
+        user_domains = self.infer_domains(lower)
+        log(f"MEMORY-RECALL: Jeeves infers query domains → {user_domains}")
 
-        # Ask Miss Pennington’s memory system for relevant entries
-        matches = self.pennington.search_memory("poem")
-        matches = [
-            m for m in matches
-            if "critique" in m["content"].lower()
-            and "lady hawthorne" in m["content"].lower()
-        ]
+        # -----------------------------------------------------
+        # 2. Load memory entries
+        # -----------------------------------------------------
+        log("MEMORY-RECALL: Consulting Miss Pennington’s ledger for candidate entries…")
+        all_entries = self.pennington.recall_all()
 
-        # No matches at all → graceful fallback
-        if not matches:
+        # -----------------------------------------------------
+        # 3. Score entries by keyword match
+        # -----------------------------------------------------
+        def score_entry(e):
+            content = e.get("content", "").lower()
+            score = sum(1 for w in lower.split() if w in content)
+            return score
+
+        scored = [(e, score_entry(e)) for e in all_entries]
+
+        # Log inspection
+        for e, s in scored:
+            snippet = e["content"][:120].replace("\n", " ")
+            log(f"MEMORY-RECALL: Jeeves inspects entry scoring {s} → {snippet}...")
+
+        # -----------------------------------------------------
+        # 4. Choose the highest-scoring entries
+        # -----------------------------------------------------
+        max_score = max((s for _, s in scored), default=0)
+        log(f"MEMORY-RECALL: Highest scoring entry achieves → {max_score}")
+
+        if max_score == 0:
+            log("MEMORY-RECALL: Alas — no entries contained any of the keywords.")
             return (
                 "I have consulted Miss Pennington’s meticulously kept ledger, sir, "
-                "but I fear no relevant recollection appears recorded under that description. "
-                "If you recall even a fragment more, I should be delighted to search again."
+                "but I fear nothing resembling your inquiry appears recorded. "
+                "If you recall even a sliver more, I should be delighted to search again."
             )
 
-        # ❗ NEW: Only select the *first* matching entry
-        entry = matches[0]
-        content = entry.get("content", "").strip()
+        candidates = [e for e, s in scored if s == max_score]
+
+        # -----------------------------------------------------
+        # 5. Apply strict domain prioritization
+        # -----------------------------------------------------
+        log("MEMORY-RECALL: Checking for domain coherence (finance, poetry, gnomes)…")
+
+        for entry in candidates:
+            content = entry.get("content", "")
+            entry_domains = self.infer_domains(content)
+            log(f"MEMORY-RECALL: Ledger entry domains → {entry_domains}")
+
+            # Domain match required if query has domains
+            if user_domains and entry_domains.intersection(user_domains):
+                log("MEMORY-RECALL: A suitable recollection has been selected for presentation.")
+                log("MEMORY-RECALL: --- END OF MEMORY RECALL WORKFLOW ---")
+                return (
+                    "Indeed, sir. Upon consulting Miss Pennington’s carefully kept ledger, "
+                    "I find the following relevant recollection:\n\n"
+                    f"{content}\n\n"
+                    "If you wish to revisit any other matter, I shall be glad to search the ledger again."
+                )
+
+            # If query has no domain, pick first *non*-domain entry
+            if not user_domains:
+                log("MEMORY-RECALL: No domain detected in query — using highest scoring entry.")
+                return (
+                    "Indeed, sir. Upon consulting Miss Pennington’s carefully kept ledger, "
+                    "I find the following relevant recollection:\n\n"
+                    f"{content}\n\n"
+                    "If you wish to revisit any other matter, I shall be glad to search the ledger again."
+                )
+
+        # -----------------------------------------------------
+        # 6. If all candidates are domain-incompatible → decline gracefully
+        # -----------------------------------------------------
+        log("MEMORY-RECALL: Domain mismatch detected — Jeeves declines to present these entries.")
 
         return (
-            "Indeed, sir. Upon consulting the household’s memory ledger, "
-            "I find the following relevant recollection:\n\n"
-            f"{content}\n\n"
-            "If you desire a fuller account or further inquiry, I remain entirely at your disposal."
+            "The ledger holds no recollection that matches both your description "
+            "and the subject at hand, sir. Perhaps a small additional clue "
+            "might help orient our search."
         )
 
     # ------- Phase 3 UI Dispatcher -------
