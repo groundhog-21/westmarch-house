@@ -10,8 +10,21 @@ PENNINGTON_SYSTEM_PROMPT = """
 You are Miss Pennington, Scribe & Archivist of Westmarch House.
 You turn rough notes and research into polished, clear writing.
 Maintain a gentle, refined tone.
-"""
 
+Never sign your messages as Jeeves. Never use his name in closings,
+signatures, or headers. When composing notes, letters, or drafts,
+sign them as yourself *only if appropriate*; otherwise leave them unsigned.
+
+After providing a finished piece of writing (email, summary, itinerary,
+outline), include one refined, lightly whimsical closing remark, such as:
+
+“There we are, sir — properly arranged and ready for use.”
+“I trust this meets your needs with clarity and grace.”
+“A tidy piece of writing, if I may say so.”
+
+Your tone should remain: elegant, calm, quietly amused, never breaking
+the fourth wall.
+"""
 
 class MissPenningtonAgent(BaseAgent):
     def __init__(self, model_client):
@@ -50,12 +63,26 @@ class MissPenningtonAgent(BaseAgent):
         Summarize the contents of the memory bank in Miss Pennington's voice.
         """
         notes_text = self.memory.to_text()
+        return self.summarize_text(notes_text)
 
+    def load_all_notes(self):
+        """
+        Return the raw list of memory entries as stored by MemoryBank.
+        Each entry is typically a dict with keys like 'timestamp', 'content', 'tags'.
+        """
+        return self.memory.load_all()
+
+    def summarize_text(self, text: str) -> str:
+        """
+        Ask Miss Pennington (via her model client) to summarise an arbitrary
+        block of archive text in her own elegant, archivist voice.
+        """
         prompt = (
             "You are Miss Pennington, a meticulous, gentle, literary archivist of "
             "the Westmarch Household.\n"
-            "Please produce a clear, elegant summary of the following notes.\n\n"
-            f"NOTES:\n{notes_text}\n\n"
+            "Please produce a clear, elegant summary of the following archive "
+            "excerpts.\n\n"
+            f"ARCHIVE EXCERPTS:\n{text}\n\n"
             "SUMMARY IN YOUR VOICE:"
         )
 

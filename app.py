@@ -76,10 +76,10 @@ st.markdown(
 
         /* Sidebar width */
         [data-testid="stSidebar"] {
-            width: 340px;
+            width: 380px;
         }
         [data-testid="stSidebar"] > div:first-child {
-            width: 340px;
+            width: 380px;
         }       
 
         /* Chat message styling */
@@ -134,6 +134,8 @@ with st.sidebar:
             "Correspondence & Drafting",
             "Records & Summaries from the Archive",
             "Her Ladyship's Critique (Proceed with Caution)",
+            "Matters Requiring the Whole Household",
+            "Jeeves Remembers",
         ],
         label_visibility="collapsed",
     )
@@ -199,12 +201,19 @@ if prompt:
 
         elif mode == "Records & Summaries from the Archive":
             speaker = "Jeeves"
-            # Pass prompt instead of empty string if user input is relevant
-            result = orchestrator.run("memory_summary", prompt or "Provide a summary of recent activities.")
+            result = orchestrator.run("query_archive", prompt)
 
         elif mode == "Her Ladyship's Critique (Proceed with Caution)":
             speaker = "Lady Hawthorne"
             result = orchestrator.run("critique", prompt)
+
+        elif mode == "Matters Requiring the Whole Household":
+            speaker = "Jeeves"
+            result = orchestrator.run("whole_household", prompt)
+
+        elif mode == "Jeeves Remembers":
+            speaker = "Jeeves"
+            result = orchestrator.run("recall_memory", prompt)
 
         else:
             speaker = "Jeeves"
