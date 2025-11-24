@@ -37,23 +37,104 @@ class WestmarchOrchestrator:
     # ---------------------------------------------------------
 
     DOMAIN_KEYWORDS = {
-        "poetry": ["poem", "poetry", "verse", "stanza", "line", "couplet", "sonnet"],
-        "finance": ["finance", "invest", "investing", "investment", "stocks", "market", "fund", "etf"],
-        "gnome": ["gnome", "garden gnome", "waistcoat", "horticultural"],
-        "weather": ["weather", "forecast", "rain", "sunny", "cloudy"],
-        "schedule": ["plan", "schedule", "agenda", "appointment"],
-        "drafting": ["email", "letter", "draft", "compose", "correspondence"],
-        "research": ["research", "investigate", "analysis"],
+        # Literary & creative writing
+        "poetry": [
+            "poem", "poetry", "verse", "stanza", "line", "couplet", "sonnet",
+            "metaphor", "imagery", "languid moon"
+        ],
+
+        # Financial topics
+        "finance": [
+            "finance", "invest", "investing", "investment", "stock", "stocks",
+            "market", "fund", "funds", "etf", "etfs", "index fund",
+            "mutual fund", "portfolio", "capital"
+        ],
+
+        # Gnome incidents & garden mysteries
+        "gnome": [
+            "gnome", "garden gnome", "waistcoat", "green waistcoat",
+            "horticultural", "paving stones", "wandering gnome"
+        ],
+
+        # Meteorological queries
+        "weather": [
+            "weather", "forecast", "rain", "sunny", "cloudy", "wind",
+            "temperature", "cold", "warm"
+        ],
+
+        # Daily agendas & planning
+        "schedule": [
+            "plan", "schedule", "agenda", "appointment",
+            "calendar", "daily plan", "itinerary"
+        ],
+
+        # Drafting & correspondence
+        "drafting": [
+            "email", "letter", "draft", "compose", "correspondence",
+            "write", "rewrite", "note"
+        ],
+
+        # Research queries (Perkins)
+        "research": [
+            "research", "investigate", "investigation", "analysis",
+            "summary", "report"
+        ],
+
+        # Historical & archival material
+        "history": [
+            "history", "historical", "estate", "westmarch", "archive", "timeline"
+        ],
+
+        # General conversation (parlour interactions)
+        "parlour": [
+            "parlour", "chat", "conversation", "talk", "discuss"
+        ],
+
+        # Critique domain (Lady Hawthorne)
+        "critique": [
+            "critique", "review", "appraisal", "assessment"
+        ],
+
+        # Sports (new domain per your instruction)
+        "sports": [
+            "sport", "sports", "tennis", "match", "tournament",
+            "score", "set", "athlete", "competition"
+        ]
     }
 
     @staticmethod
     def infer_domains(text: str) -> set:
-        """Infer semantic domains from a block of text."""
+        """
+        Infer semantic domains from a block of text.
+
+        Improvements:
+        - Handles multi-word phrases cleanly.
+        - Uses whole-word matching for single tokens.
+        - Normalizes text for consistent comparisons.
+        """
         t = text.lower()
+
+        # Normalized token set for whole-word matching
+        tokens = set(t.replace(",", " ").replace(".", " ").split())
+
         found: set[str] = set()
+
         for domain, keywords in WestmarchOrchestrator.DOMAIN_KEYWORDS.items():
-            if any(kw in t for kw in keywords):
-                found.add(domain)
+            for kw in keywords:
+                kw_lower = kw.lower()
+
+                # Case 1: multi-word phrase (“garden gnome”)
+                if " " in kw_lower:
+                    if kw_lower in t:       # non-fuzzy exact phrase match
+                        found.add(domain)
+                        break
+
+                # Case 2: single word (“gnome”, “fund”)
+                else:
+                    if kw_lower in tokens:
+                        found.add(domain)
+                        break
+
         return found
 
     def parlour_discussion(self, user_input: str) -> str:
@@ -938,23 +1019,35 @@ class WestmarchOrchestrator:
 
     def recall_memory(self, user_input: str) -> str:
         """
-        Strict domain-prioritized memory recall for Jeeves.
+        Jeeves retrieves past notes from Miss Pennington’s memory ledger
+        that relate to the user's query.
         """
 
         log("WORKFLOW: Memory recall initiated")
 
         # -----------------------------------------------------
-        # 0. Closure detection
+        # 0. Closure / approval detection
         # -----------------------------------------------------
         lower = user_input.strip().lower()
+
         closure_phrases = [
-            "thank you", "my thanks", "that will do", "that will suffice",
-            "very well", "fine, thank you", "fine thank you",
-            "excellent, thank you", "alright then", "okay then",
-            "appreciated", "much obliged"
+            "thank you",
+            "my thanks",
+            "that will do",
+            "that will suffice",
+            "that will be all",
+            "very well",
+            "fine, thank you",
+            "fine thank you",
+            "excellent, thank you",
+            "alright then",
+            "okay then",
+            "appreciated",
+            "much obliged",
         ]
 
         if any(p in lower for p in closure_phrases):
+            log("MEMORY-RECALL: Closure phrase detected — Jeeves retires gracefully.")
             return (
                 "Indeed, sir. Miss Pennington and I remain prepared "
                 "to recover any stray reflections."
@@ -964,86 +1057,101 @@ class WestmarchOrchestrator:
         # 1. Infer domain(s) of the user query
         # -----------------------------------------------------
         log(f"MEMORY-RECALL: Jeeves notes the user's inquiry → '{lower}'")
+        log("MEMORY-RECALL: Extracting keywords from query…")
         user_domains = self.infer_domains(lower)
         log(f"MEMORY-RECALL: Jeeves infers query domains → {user_domains}")
 
         # -----------------------------------------------------
-        # 2. Load memory entries
+        # 2. Ask Miss Pennington for all notes (raw candidates)
         # -----------------------------------------------------
         log("MEMORY-RECALL: Consulting Miss Pennington’s ledger for candidate entries…")
-        all_entries = self.pennington.recall_all()
+        all_notes = self.pennington.load_all_notes()  # or whatever your method is called
+        log(f"MEMORY: Loaded {len(all_notes)} notes from the ledger")
 
         # -----------------------------------------------------
-        # 3. Score entries by keyword match
+        # 3. Score each note against the query
         # -----------------------------------------------------
-        def score_entry(e):
-            content = e.get("content", "").lower()
-            score = sum(1 for w in lower.split() if w in content)
+        def score_entry(content: str, query: str) -> int:
+            # Very simple keyword overlap scoring for now
+            q_words = set(query.split())
+            score = 0
+            for w in q_words:
+                if w and w in content.lower():
+                    score += 1
             return score
 
-        scored = [(e, score_entry(e)) for e in all_entries]
+        candidates: list[tuple[int, dict]] = []
+        for entry in all_notes:
+            content = entry.get("content", "") or ""
+            s = score_entry(content, lower)
+            if s > 0:
+                candidates.append((s, entry))
 
-        # Log inspection
-        for e, s in scored:
-            snippet = e["content"][:120].replace("\n", " ")
-            log(f"MEMORY-RECALL: Jeeves inspects entry scoring {s} → {snippet}...")
-
-        # -----------------------------------------------------
-        # 4. Choose the highest-scoring entries
-        # -----------------------------------------------------
-        max_score = max((s for _, s in scored), default=0)
-        log(f"MEMORY-RECALL: Highest scoring entry achieves → {max_score}")
-
-        if max_score == 0:
+        if not candidates:
             log("MEMORY-RECALL: Alas — no entries contained any of the keywords.")
             return (
                 "I have consulted Miss Pennington’s meticulously kept ledger, sir, "
-                "but I fear nothing resembling your inquiry appears recorded. "
-                "If you recall even a sliver more, I should be delighted to search again."
+                "but I fear no relevant recollection appears recorded under that description. "
+                "If you recall even a fragment more, I should be delighted to search again."
             )
 
-        candidates = [e for e, s in scored if s == max_score]
+        # Sort by descending score
+        candidates.sort(key=lambda pair: pair[0], reverse=True)
 
         # -----------------------------------------------------
-        # 5. Apply strict domain prioritization
+        # 4. Log only the TOP 10 candidates
+        # -----------------------------------------------------
+        top_candidates = candidates[:10]
+        top_best_score = top_candidates[0][0]
+        log(f"MEMORY-RECALL: Highest scoring entry achieves → {top_best_score}")
+        log("MEMORY-RECALL: Showing top 10 candidates by score:")
+
+        for score, entry in top_candidates:
+            snippet = (entry.get("content", "") or "").replace("\n", " ")
+            if len(snippet) > 80:
+                snippet = snippet[:80] + "…"
+            log(f"MEMORY-RECALL: • score {score:2d} → {snippet}")
+
+        # -----------------------------------------------------
+        # 5. Apply strict domain prioritization (on top 10 only)
         # -----------------------------------------------------
         log("MEMORY-RECALL: Checking for domain coherence (finance, poetry, gnomes)…")
 
-        for entry in candidates:
-            content = entry.get("content", "")
+        chosen_entry: Optional[dict] = None
+
+        for score, entry in top_candidates:
+            content = entry.get("content", "") or ""
             entry_domains = self.infer_domains(content)
             log(f"MEMORY-RECALL: Ledger entry domains → {entry_domains}")
 
-            # Domain match required if query has domains
-            if user_domains and entry_domains.intersection(user_domains):
+            # Domain logic:
+            # - If user_domains is empty, allow anything.
+            # - If entry has no domains, allow it (fallback).
+            # - Otherwise, require intersection.
+            if not user_domains or not entry_domains or (user_domains & entry_domains):
+                chosen_entry = entry
                 log("MEMORY-RECALL: A suitable recollection has been selected for presentation.")
-                log("MEMORY-RECALL: --- END OF MEMORY RECALL WORKFLOW ---")
-                return (
-                    "Indeed, sir. Upon consulting Miss Pennington’s carefully kept ledger, "
-                    "I find the following relevant recollection:\n\n"
-                    f"{content}\n\n"
-                    "If you wish to revisit any other matter, I shall be glad to search the ledger again."
-                )
+                break
 
-            # If query has no domain, pick first *non*-domain entry
-            if not user_domains:
-                log("MEMORY-RECALL: No domain detected in query — using highest scoring entry.")
-                return (
-                    "Indeed, sir. Upon consulting Miss Pennington’s carefully kept ledger, "
-                    "I find the following relevant recollection:\n\n"
-                    f"{content}\n\n"
-                    "If you wish to revisit any other matter, I shall be glad to search the ledger again."
-                )
+        # If no domain-coherent entry found among top 10,
+        # fall back to the single best-scoring candidate overall.
+        if chosen_entry is None:
+            _, chosen_entry = top_candidates[0]
+            log("MEMORY-RECALL: No domain-coherent candidate found; "
+                "falling back to the highest-scoring entry.")
+
+        log("MEMORY-RECALL: --- END OF MEMORY RECALL WORKFLOW ---")
 
         # -----------------------------------------------------
-        # 6. If all candidates are domain-incompatible → decline gracefully
+        # 6. Produce Jeeves's reply
         # -----------------------------------------------------
-        log("MEMORY-RECALL: Domain mismatch detected — Jeeves declines to present these entries.")
+        content = (chosen_entry.get("content", "") or "").strip()
 
         return (
-            "The ledger holds no recollection that matches both your description "
-            "and the subject at hand, sir. Perhaps a small additional clue "
-            "might help orient our search."
+            "Indeed, sir. Upon consulting Miss Pennington’s carefully kept ledger, "
+            "I find the following relevant recollection:\n\n"
+            f"{content}\n\n"
+            "If you wish to revisit any other matter, I shall be glad to search the ledger again."
         )
 
     # ------- Phase 3 UI Dispatcher -------
