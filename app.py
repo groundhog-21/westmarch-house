@@ -9,6 +9,215 @@ from westmarch.agents.miss_pennington import MissPenningtonAgent
 from westmarch.agents.lady_hawthorne import LadyHawthorneAgent
 from westmarch.core.models import ModelClient
 
+DEMO_9_MESSAGES = [
+    # Scene 1 — The Discovery
+    {
+        "role": "assistant",
+        "content": (
+            "✒️ Pennington: Sir, while preparing the monthly archival index, I discovered "
+            "a parchment filed under *‘Agricultural Affairs → Troublingly Damp Potatoes’.* "
+            "A most improbable classification."
+        ),
+    },
+    {
+        "role": "user",
+        "content": "👤 User: What sort of parchment is it?",
+    },
+    {
+        "role": "assistant",
+        "content": (
+            "✒️ Pennington: A brittle sheet labelled only: "
+            "**‘UNEXPLAINED RATTLING — DO NOT DISTURB.’**  "
+            "Naturally, I disturbed it at once."
+        ),
+    },
+    {
+        "role": "assistant",
+        "content": "🎩 Jeeves: Most intriguing. I shall summon Perkins.",
+    },
+
+    # Scene 2 — Perkins Begins the Investigation
+    {
+        "role": "assistant",
+        "content": (
+            "📚 Perkins: A misfiled parchment with a dire warning. Excellent. "
+            "Miss Pennington: hand it over. I shall examine the metadata immediately."
+        ),
+    },
+    {
+        "role": "assistant",
+        "content": (
+            "✒️ Pennington: The ink trembles — as though the writer’s hand shook with dread."
+        ),
+    },
+    {
+        "role": "assistant",
+        "content": "📚 Perkins: Then let us begin **Parallel Analysis Round 1**.",
+    },
+
+    # Scene 3 — Parallel Agents Activated
+    {
+        "role": "assistant",
+        "content": (
+            "📚 Perkins: I will analyze ink density, tremor frequency, and crumb distribution."
+        ),
+    },
+    {
+        "role": "assistant",
+        "content": "✒️ Pennington: I shall prepare an official Discrepancy Report.",
+    },
+    {
+        "role": "assistant",
+        "content": "🎩 Jeeves: Very good. I shall keep the process orderly.",
+    },
+
+    # Scene 4 — Custom Tool Invocation (narrative only)
+    {
+        "role": "assistant",
+        "content": (
+            "📚 Perkins: Jeeves, activate the **Archival Metadata Scrutinizer**, if you please."
+        ),
+    },
+    {
+        "role": "assistant",
+        "content": (
+            "🧰 Tool (Archival Metadata Scrutinizer v3.2):\n"
+            "Ink dated 1847.\n"
+            "Tremor frequency: pronounced.\n"
+            "Foreign substances: biscuit crumbs (0.7 g).\n"
+            "Ambient dread: moderate."
+        ),
+    },
+    {
+        "role": "assistant",
+        "content": "📚 Perkins: As expected. Biscuit-fear correlation remains strong.",
+    },
+
+    # Scene 5 — Lady Hawthorne Arrives
+    {
+        "role": "assistant",
+        "content": (
+            "🕯️ Hawthorne: My dears, if you require a device to tell you your papers are "
+            "dusty and frightened, perhaps we should install cushions in the archives "
+            "to prevent fainting."
+        ),
+    },
+    {
+        "role": "assistant",
+        "content": "📚 Perkins: I assure Your Ladyship, this is legitimate research.",
+    },
+    {
+        "role": "assistant",
+        "content": (
+            "🕯️ Hawthorne: Perkins, the only legitimate research is into how quickly "
+            "I can leave this conversation."
+        ),
+    },
+
+    # Scene 6 — Investigation Loop 2
+    {
+        "role": "assistant",
+        "content": "📚 Perkins: The metadata envelope for 1847, if you please, Jeeves.",
+    },
+    {
+        "role": "assistant",
+        "content": "🎩 Jeeves: At once, sir.",
+    },
+    {
+        "role": "assistant",
+        "content": (
+            "📚 Perkins: Aha! A record of a rattling chest kept in the Westmarch cellar, "
+            "described only as ‘noisy,’ ‘ominous,’ and ‘containing a turnip of considerable "
+            "menace.’"
+        ),
+    },
+
+    # Scene 7 — Long-Running Pause/Resume Operation (narrative)
+    {
+        "role": "assistant",
+        "content": (
+            "🕯️ Narrator: A sudden metallic **CLANG** echoes through the archives. "
+            "The Automated Card Catalogue Carousel has unmoored itself."
+        ),
+    },
+    {
+        "role": "assistant",
+        "content": (
+            "🎩 Jeeves: Oh dear. That would be the Automated Card Catalogue Carousel. "
+            "It occasionally unmoors itself."
+        ),
+    },
+    {
+        "role": "user",
+        "content": "👤 User: Shall we pause the investigation until the noise settles?",
+    },
+    {
+        "role": "assistant",
+        "content": (
+            "🎩 Jeeves: Very prudent, sir.\n"
+            "**Pausing investigation…**\n"
+            "…\n"
+            "…\n"
+            "**Resuming investigation now.**"
+        ),
+    },
+
+    # Scene 8 — Resolution
+    {
+        "role": "assistant",
+        "content": (
+            "📚 Perkins: The rattling parchment refers to the chest in the cellar — "
+            "the one containing only a cracked vase, a spoon, and a turnip that dried "
+            "into a rather menacing shape."
+        ),
+    },
+    {
+        "role": "assistant",
+        "content": "✒️ Pennington: In other words: harmless.",
+    },
+    {
+        "role": "assistant",
+        "content": (
+            "🎩 Jeeves: Precisely. And at some point, a startled archivist abandoned their "
+            "post and misfiled the warning with the potatoes."
+        ),
+    },
+    {
+        "role": "user",
+        "content": "👤 User: So the mystery is solved?",
+    },
+    {
+        "role": "assistant",
+        "content": "🎩 Jeeves: Entirely, sir.",
+    },
+
+    # Scene 9 — Pennington’s Final Report
+    {
+        "role": "assistant",
+        "content": (
+            "✒️ Pennington:\n"
+            "**Archival Mystery Report – Final Findings**\n\n"
+            "**Cause:** Misfiled warning parchment from 1847.\n"
+            "**Custom Tool Used:** Archival Metadata Scrutinizer v3.2.\n"
+            "**Long-Running Interruption:** Card Catalogue Carousel incident.\n"
+            "**Contributing Factors:** Biscuit crumbs, trembling handwriting, "
+            "potato subdirectory error.\n"
+            "**Resolution:** Reclassified under ‘Persistent Noises.’\n"
+            "**Recommendation:** Reduce biscuit consumption in archives; reconsider "
+            "the Carousel’s freedom of movement."
+        ),
+    },
+
+    # Scene 10 — Hawthorne’s Final Commentary
+    {
+        "role": "assistant",
+        "content": (
+            "🕯️ Hawthorne: Well, you’ve successfully wasted a morning identifying a "
+            "frightened turnip. I suppose congratulations are in order. Now if you’ll "
+            "excuse me, the ficus is behaving suspiciously again."
+        ),
+    },
+]
 
 # ------------------------------------
 # Configuration
@@ -147,7 +356,16 @@ with st.sidebar:
         st.session_state.messages = []
         st.rerun()
 
+# -----------------------------
+# Mode-Specific UI (Before Prompt)
+# -----------------------------
+if mode == "Matters Requiring the Whole Household":
+    st.subheader("Matters Requiring the Whole Household")
 
+    if st.button("▶ Run Demo 9 – A Mystery in the Archives"):
+        st.session_state.messages = DEMO_9_MESSAGES.copy()
+        st.rerun()
+        
 # -----------------------------
 # Display Conversation History
 # -----------------------------
@@ -210,10 +428,6 @@ if prompt:
         elif mode == "Matters Requiring the Whole Household":
             speaker = "Jeeves"
             result = orchestrator.run("whole_household", prompt)
-
-        elif mode == "Jeeves Remembers":
-            speaker = "Jeeves"
-            result = orchestrator.run("recall_memory", prompt)
 
         else:
             speaker = "Jeeves"
