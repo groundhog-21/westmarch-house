@@ -363,7 +363,18 @@ if mode == "Matters Requiring the Whole Household":
     st.subheader("Matters Requiring the Whole Household")
 
     if st.button("▶ Run Demo 9 – A Mystery in the Archives"):
-        st.session_state.messages = DEMO_9_MESSAGES.copy()
+        orchestrator = st.session_state.orchestrator
+        demo9_messages = orchestrator.run("archive_mystery", None)
+
+        # If run() returns a list (Demo 9), use it directly
+        if isinstance(demo9_messages, list):
+            st.session_state.messages = demo9_messages
+        else:
+            # Fallback: wrap as single assistant message
+            st.session_state.messages = [
+                {"role": "assistant", "content": demo9_messages, "speaker": "Jeeves"}
+            ]
+
         st.rerun()
         
 # -----------------------------

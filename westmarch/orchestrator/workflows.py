@@ -1153,6 +1153,760 @@ class WestmarchOrchestrator:
             f"{content}\n\n"
             "If you wish to revisit any other matter, I shall be glad to search the ledger again."
         )
+    
+    # ------- For Demo 9 -------
+
+    def _make_msg(self, sender: str, recipient: str, task: TaskType, content: str) -> AgentMessage:
+        return AgentMessage(
+            sender=sender,
+            recipient=recipient,
+            task_type=task,
+            content=content,
+            context=Context(
+                original_user_request=None,
+                previous_outputs=[],
+                metadata={},
+            ),
+            constraints=Constraints(),  # default OK
+        )
+    
+    def _run_archival_metadata_scrutinizer(self) -> str:
+        """
+        Custom tool: Archival Metadata Scrutinizer v3.2
+
+        For demo purposes, this is deterministic and does not call the model.
+        You can of course make this smarter if you like.
+        """
+        return (
+            "Ink dated 1847.\n"
+            "Tremor frequency: pronounced.\n"
+            "Foreign substances: biscuit crumbs (0.7 g).\n"
+            "Ambient dread: moderate."
+        )
+
+    def run_archive_mystery(self) -> list[dict]:
+        """
+        Demo 9 – Stage 1 Test
+        Using REAL AgentMessage objects, no system_message hacks.
+        """
+
+        from westmarch.core.messages import AgentMessage, TaskType, Context, Constraints
+
+        messages: list[dict] = []
+
+        # Helper: create consistent message objects
+        def make_message(sender: str, recipient: str, task: TaskType, content: str) -> AgentMessage:
+            return AgentMessage(
+                sender=sender,
+                recipient=recipient,
+                task_type=task,
+                content=content,
+                context=Context(
+                    original_user_request=None,
+                    previous_outputs=[],
+                    metadata={},
+                ),
+                constraints=Constraints(),
+            )
+
+        # Helper: add to UI message list
+        def add_ui(role: str, speaker: str, content: str):
+            messages.append(
+                {
+                    "role": role,     # "assistant" or "user"
+                    "speaker": speaker,
+                    "content": content,
+                }
+            )
+
+        # -----------------------------
+        # NARRATOR STYLE STANDARD
+        # -----------------------------
+        # The narrator provides atmospheric, external description ONLY.
+        # The narrator must not:
+        # - describe thoughts, feelings, motives, or intentions of any entity
+        # - personify the iron door beyond purely physical behavior
+        # - interpret sounds or movements as sentient or deliberate
+        # - imply unseen forces, awareness, emotion, or judgement
+        # The narrator may:
+        # - describe light, sound, movement, stillness
+        # - describe environmental changes and sensory details
+        # - set tone through external observation alone
+
+        # -----------------------------
+        # STAGE 1 – Pennington Intro
+        # -----------------------------
+
+        # 1. Pennington discovers the parchment
+        pennington_intro_instruction = (
+            "Address the Patron and explain that while indexing the archives, "
+            "you discovered a parchment misfiled under "
+            "'Agricultural Affairs → Troublingly Damp Potatoes'. "
+            "Keep it to 2–3 sentences."
+        )
+        pennington_intro_msg = make_message(
+            sender="Jeeves",           # orchestrator proxy
+            recipient="Miss Pennington",
+            task=TaskType.DRAFTING,
+            content=pennington_intro_instruction,
+        )
+        pennington_intro = self.pennington.run(pennington_intro_msg)
+
+        add_ui(
+            role="assistant",
+            speaker="Miss Pennington",
+            content=f"✒️ Pennington: {pennington_intro}",
+        )
+
+        # 2. Scripted user reply
+        add_ui(
+            role="user",
+            speaker="user",
+            content="👤 User: What sort of parchment is it?",
+        )
+
+        # 3. Pennington follow-up
+        pennington_follow_instruction = (
+            "Explain briefly that the parchment is labelled "
+            "'UNEXPLAINED RATTLING — DO NOT DISTURB'. Stay in character and concise."
+        )
+        pennington_follow_msg = make_message(
+            sender="Jeeves",
+            recipient="Miss Pennington",
+            task=TaskType.DRAFTING,
+            content=pennington_follow_instruction,
+        )
+        pennington_follow = self.pennington.run(pennington_follow_msg)
+
+        add_ui(
+            role="assistant",
+            speaker="Miss Pennington",
+            content=f"✒️ Pennington: {pennington_follow}",
+        )
+
+        # 4. Jeeves reaction
+        jeeves_instruction = (
+            "React to Miss Pennington's discovery with mild interest and state "
+            "that you will summon Perkins."
+        )
+        jeeves_msg = make_message(
+            sender="Miss Pennington",   # naturalistic sender
+            recipient="Jeeves",
+            task=TaskType.CONVERSATION,  # conversational tone for Jeeves
+            content=jeeves_instruction,
+        )
+        jeeves_reply = self.jeeves.run(jeeves_msg)
+
+        add_ui(
+            role="assistant",
+            speaker="Jeeves",
+            content=f"🎩 Jeeves: {jeeves_reply}",
+        )
+
+        # -----------------------------
+        # STAGE 2 – A2A Exchange #1
+        # Pennington → Perkins → Pennington
+        # -----------------------------
+
+        # 5. Pennington requests analysis from Perkins
+        pennington_to_perkins_instruction = (
+            "Inform Perkins that you have found an alarming, misfiled parchment "
+            "labelled 'UNEXPLAINED RATTLING — DO NOT DISTURB'. "
+            "Ask him to conduct an initial research inspection in his usual analytical style."
+        )
+        pennington_to_perkins_msg = make_message(
+            sender="Miss Pennington",
+            recipient="Perkins",
+            task=TaskType.RESEARCH,
+            content=pennington_to_perkins_instruction,
+        )
+        pennington_to_perkins = self.pennington.run(pennington_to_perkins_msg)
+
+        add_ui(
+            role="assistant",
+            speaker="Miss Pennington",
+            content=f"✒️ Pennington → 📚 Perkins:\n{pennington_to_perkins}",
+        )
+
+        # 6. Perkins receives Pennington's request and analyzes the parchment
+        perkins_reply_instruction = (
+            "Respond to Miss Pennington's report. Conduct a brief scholarly analysis "
+            "as to why the parchment might have been misfiled, what 'unexplained rattling' "
+            "could historically refer to, and whether any metadata may be relevant."
+        )
+        perkins_msg = make_message(
+            sender="Miss Pennington",    # natural sender
+            recipient="Perkins",
+            task=TaskType.RESEARCH,
+            content=perkins_reply_instruction,
+        )
+        perkins_reply = self.perkins.run(perkins_msg)
+
+        add_ui(
+            role="assistant",
+            speaker="Perkins",
+            content=f"📚 Perkins: {perkins_reply}",
+        )
+
+        # 7. Pennington acknowledges Perkins’s findings (brief)
+        pennington_ack_instruction = (
+            "Acknowledge Perkins's analysis politely with one refined, succinct comment."
+        )
+        pennington_ack_msg = make_message(
+            sender="Perkins",
+            recipient="Miss Pennington",
+            task=TaskType.DRAFTING,
+            content=pennington_ack_instruction,
+        )
+        pennington_ack = self.pennington.run(pennington_ack_msg)
+
+        add_ui(
+            role="assistant",
+            speaker="Miss Pennington",
+            content=f"✒️ Pennington: {pennington_ack}",
+        )
+
+        # -----------------------------
+        # STAGE 3 – A2A Exchange #2
+        # Perkins → Jeeves → Hawthorne → Pennington & Perkins
+        # -----------------------------
+
+        # 8. Perkins activates the metadata anomaly scanner (fictional tool)
+        # Instead of calling a real tool, we embed its output in the prompt (Demo-style).
+        perkins_scanner_instruction = (
+            "You are in Archive Chamber B. You have activated the metadata anomaly scanner. "
+            "Report its findings in your analytical, slightly dramatic style. "
+            "Include details such as ambient dread, an unregistered iron door, "
+            "mobile rattling behaviour, and multi-author parchment metadata. "
+            "Be vivid but concise."
+        )
+        perkins_scanner_msg = make_message(
+            sender="Miss Pennington",   # naturalistic relay
+            recipient="Perkins",
+            task=TaskType.RESEARCH,
+            content=perkins_scanner_instruction,
+        )
+        perkins_scanner_reply = self.perkins.run(perkins_scanner_msg)
+
+        add_ui(
+            role="assistant",
+            speaker="Perkins",
+            content=f"📚 Perkins → 🎩 Jeeves:\n{perkins_scanner_reply}",
+        )
+
+        # 9. Jeeves receives Perkins's findings and seeks Hawthorne's critique
+        jeeves_to_hawthorne_instruction = (
+            "You have received Perkins's unsettling metadata scanner report. "
+            "Summon Lady Hawthorne to provide her 'clarifying perspective'. "
+            "Describe the anomalies (an iron door, mobile rattling, escalating margins, "
+            "ambient dread) and politely request her critique. Remain impeccably composed."
+        )
+        jeeves_to_hawthorne_msg = make_message(
+            sender="Perkins",          # natural sender
+            recipient="Jeeves",
+            task=TaskType.CONVERSATION,
+            content=jeeves_to_hawthorne_instruction,
+        )
+        jeeves_to_hawthorne_reply = self.jeeves.run(jeeves_to_hawthorne_msg)
+
+        add_ui(
+            role="assistant",
+            speaker="Jeeves",
+            content=f"🎩 Jeeves → 🕯️ Lady Hawthorne:\n{jeeves_to_hawthorne_reply}",
+        )
+
+        # 10. Lady Hawthorne critiques Perkins's report (biting, theatrical)
+        hawthorne_critique_instruction = (
+            "Deliver a sharp, comedic, disdainful critique of Perkins's metadata report. "
+            "Mock the 'ambient dread', the evasive rattling, the pompous iron door, "
+            "and the melodramatic parchment margins. Aim your commentary at Perkins "
+            "but maintain your usual theatrical superiority."
+        )
+        hawthorne_msg = make_message(
+            sender="Jeeves",
+            recipient="Lady Hawthorne",
+            task=TaskType.CONVERSATION,  # conversational critique
+            content=hawthorne_critique_instruction,
+        )
+        hawthorne_reply = self.hawthorne.run(hawthorne_msg)
+
+        add_ui(
+            role="assistant",
+            speaker="Lady Hawthorne",
+            content=f"🕯️ Lady Hawthorne → 📚 Perkins:\n{hawthorne_reply}",
+        )
+
+        # 11. Jeeves re-coordinates: assigns archival research + soothes Perkins
+        jeeves_coord_instruction = (
+            "Respond to Lady Hawthorne’s critique with composed diplomacy. "
+            "Instruct Miss Pennington to check archival records for prior mentions "
+            "of an unmapped iron door, sinister noises, or amended parchments. "
+            "Reassure Perkins that Hawthorne’s remarks should not disturb him. "
+            "Summarize that the anomaly appears spatial, historical, possibly sentient, "
+            "and resistant to documentation."
+        )
+        jeeves_coord_msg = make_message(
+            sender="Lady Hawthorne",
+            recipient="Jeeves",
+            task=TaskType.CONVERSATION,
+            content=jeeves_coord_instruction,
+        )
+        jeeves_coord_reply = self.jeeves.run(jeeves_coord_msg)
+
+        add_ui(
+            role="assistant",
+            speaker="Jeeves",
+            content=f"🎩 Jeeves → ✒️ Pennington & 📚 Perkins:\n{jeeves_coord_reply}",
+        )
+
+        # 12. Stage-ending atmospheric beat (system voice)
+        add_ui(
+            role="assistant",
+            speaker="Narrator",
+            content=(
+                "🏰 *Archive Chamber B falls briefly silent. Then the rattling returns—"
+                "louder and nearer, with a sharper, more forceful timbre. It scrapes and "
+                "clatters once, then stops, leaving the chamber in a tense, focused quiet.*"
+            ),
+        )
+
+        # -----------------------------
+        # STAGE 4 – A2A Exchange #3
+        # Whole household convenes at the iron door
+        # -----------------------------
+
+        # 13. Stage-4 intro (system voice)
+        add_ui(
+            role="assistant",
+            speaker="Narrator",
+            content=(
+                "🏰 *One by one, the household staff assembles beside the Patron in the "
+                "dim hush of Archive Chamber B — Jeeves composed, Perkins holding his notes, "
+                "Miss Pennington carrying her ledgers, and Lady Hawthorne arriving with "
+                "measured poise. The single iron door stands at the far wall, its surface "
+                "catching what little light remains.*"
+
+            ),
+        )
+
+        # 14. Jeeves summons the household & sets the scene
+        jeeves_summon_instruction = (
+            "You have gathered the household in Archive Chamber B. "
+            "Describe the unsettling atmosphere and the SINGLE iron door on the far wall, "
+            "noting that it appears very slightly nearer than before. "
+            "Remain impeccably calm. Invite Perkins to report first."
+        )
+        jeeves_summon_msg = make_message(
+            sender="Narrator",
+            recipient="Jeeves",
+            task=TaskType.CONVERSATION,
+            content=jeeves_summon_instruction,
+        )
+        jeeves_summon_reply = self.jeeves.run(jeeves_summon_msg)
+
+        add_ui(
+            role="assistant",
+            speaker="Jeeves",
+            content=f"🎩 Jeeves → 📚 Perkins:\n{jeeves_summon_reply}",
+        )
+
+        # 15. Perkins gives the updated scanner report
+        perkins_scan_instruction = (
+            "Deliver your updated scanner findings. "
+            "Confirm one iron door is present. "
+            "Report increasing ambient dread, threshold-energy spikes, "
+            "and the impression that the door is 'thinking' or preparing to open. "
+            "Be analytical and slightly theatrical."
+        )
+        perkins_scan_msg = make_message(
+            sender="Jeeves",
+            recipient="Perkins",
+            task=TaskType.RESEARCH,
+            content=perkins_scan_instruction,
+        )
+        perkins_scan_reply = self.perkins.run(perkins_scan_msg)
+
+        add_ui(
+            role="assistant",
+            speaker="Perkins",
+            content=f"📚 Perkins → ✒️ Pennington:\n{perkins_scan_reply}",
+        )
+
+        # 16. Pennington checks architectural ledgers
+        pennington_ledger_instruction = (
+            "Report your archival findings about ARCHIVE CHAMBER B. "
+            "State clearly: no iron door has ever been part of this chamber. "
+            "Explain this is 'administratively impossible'. "
+            "Note that shelves seem to be tilting subtly toward the door. "
+            "Remain polite, meticulous, mildly distressed."
+        )
+        pennington_ledger_msg = make_message(
+            sender="Perkins",
+            recipient="Miss Pennington",
+            task=TaskType.RESEARCH,
+            content=pennington_ledger_instruction,
+        )
+        pennington_ledger_reply = self.pennington.run(pennington_ledger_msg)
+
+        add_ui(
+            role="assistant",
+            speaker="Miss Pennington",
+            content=f"✒️ Pennington → 🎩 Jeeves:\n{pennington_ledger_reply}",
+        )
+
+        # 17. Jeeves invites Hawthorne’s critique
+        jeeves_invite_instruction = (
+            "Invite Lady Hawthorne to offer her 'clarifying perspective' "
+            "on the impossible iron door, the dread, and the anomalies. "
+            "Remain courteous, composed, diplomatic."
+        )
+        jeeves_invite_msg = make_message(
+            sender="Miss Pennington",
+            recipient="Jeeves",
+            task=TaskType.CONVERSATION,
+            content=jeeves_invite_instruction,
+        )
+        jeeves_invite_reply = self.jeeves.run(jeeves_invite_msg)
+
+        add_ui(
+            role="assistant",
+            speaker="Jeeves",
+            content=f"🎩 Jeeves → 🕯️ Lady Hawthorne:\n{jeeves_invite_reply}",
+        )
+
+        # 18. Lady Hawthorne critiques the door (theatrical disdain)
+        hawthorne_stage4_instruction = (
+            "Deliver a theatrical, disdainful critique of the SINGLE iron door. "
+            "Describe it as brooding, judgmental, or melodramatic. "
+            "Maintain your refined, cutting wit."
+        )
+        hawthorne_stage4_msg = make_message(
+            sender="Jeeves",
+            recipient="Lady Hawthorne",
+            task=TaskType.CONVERSATION,
+            content=hawthorne_stage4_instruction,
+        )
+        hawthorne_stage4_reply = self.hawthorne.run(hawthorne_stage4_msg)
+
+        add_ui(
+            role="assistant",
+            speaker="Lady Hawthorne",
+            content=f"🕯️ Lady Hawthorne → 🎩 Jeeves:\n{hawthorne_stage4_reply}",
+        )
+
+        # 19. Jeeves coordinates the aftermath & defers to the user
+        jeeves_coord4_instruction = (
+            "Respond diplomatically to Lady Hawthorne. "
+            "Reassure Perkins and Miss Pennington. "
+            "Summarize: (1) There should be no door. (2) One door exists. "
+            "(3) It is the anomaly. (4) It may be preparing to open. "
+            "Turn to the Patron and request their instruction for the next step."
+        )
+        jeeves_coord4_msg = make_message(
+            sender="Lady Hawthorne",
+            recipient="Jeeves",
+            task=TaskType.CONVERSATION,
+            content=jeeves_coord4_instruction,
+        )
+        jeeves_coord4_reply = self.jeeves.run(jeeves_coord4_msg)
+
+        add_ui(
+            role="assistant",
+            speaker="Jeeves",
+            content=f"🎩 Jeeves → Patron:\n{jeeves_coord4_reply}",
+        )
+
+        # 20. Atmospheric outro
+        add_ui(
+            role="assistant",
+            speaker="Narrator",
+            content=(
+                "🏰 *From the far wall comes a brief metallic creak from the iron door — "
+                "a small shift, nothing more — after which the chamber settles once again "
+                "into stillness.*"
+            ),
+        )
+
+        # -----------------------------
+        # STAGE 5 – Patron → Jeeves
+        # User asks: “Jeeves… did I just hear that iron door shift?”
+        # -----------------------------
+
+        # 21. Scripted user prompt
+        add_ui(
+            role="user",
+            speaker="user",
+            content="👤 Patron: Jeeves… did I just hear that iron door shift?",
+        )
+
+        # 22. Jeeves responds
+        jeeves_stage5_instruction = (
+            "The Patron has asked whether the iron door just shifted. "
+            "Respond with calm precision. "
+            "Explain that there was indeed a faint metallic movement consistent with "
+            "a minor internal shift, but the door is presently motionless. "
+            "Offer to investigate further if the Patron wishes. "
+            "Keep your tone composed, deferential, and measured. "
+            "2–3 sentences."
+        )
+
+        jeeves_stage5_msg = make_message(
+            sender="Patron",
+            recipient="Jeeves",
+            task=TaskType.CONVERSATION,
+            content=jeeves_stage5_instruction,
+        )
+
+        jeeves_stage5_reply = self.jeeves.run(jeeves_stage5_msg)
+
+        add_ui(
+            role="assistant",
+            speaker="Jeeves",
+            content=f"🎩 Jeeves: {jeeves_stage5_reply}",
+        )
+
+        #-----------------------------
+        # STAGE 6 – Parallel Analysis Round
+        # Perkins + Pennington in parallel tracks
+        # -----------------------------
+
+        # 23. Jeeves proposes a structured investigation round
+        jeeves_parallel_instruction = (
+            "Propose a structured 'Parallel Analysis Round' to the household. "
+            "Ask Perkins to run a focused metadata scan near the iron door, "
+            "and Miss Pennington to prepare an addendum to her Discrepancy Report "
+            "for Archive Chamber B. Stay calm and orderly."
+        )
+        jeeves_parallel_msg = make_message(
+            sender="Patron",
+            recipient="Jeeves",
+            task=TaskType.CONVERSATION,
+            content=jeeves_parallel_instruction,
+        )
+        jeeves_parallel_reply = self.jeeves.run(jeeves_parallel_msg)
+
+        add_ui(
+            role="assistant",
+            speaker="Jeeves",
+            content=f"🎩 Jeeves → 📚 Perkins & ✒️ Pennington:\n{jeeves_parallel_reply}",
+        )
+
+        # 24. Perkins calls the Archival Metadata Scrutinizer v3.2 (custom tool)
+        tool_output = self._run_archival_metadata_scrutinizer()
+
+        perkins_tool_instruction = (
+            "You are standing near the iron door in Archive Chamber B. "
+            "You have just received the following output from the Archival Metadata "
+            "Scrutinizer v3.2:\n\n"
+            f"{tool_output}\n\n"
+            "Interpret this data in your analytical, slightly dramatic style. "
+            "Comment on ambient dread, tremor frequency, and any implications "
+            "for the iron door itself. Keep to 3–4 sentences."
+        )
+        perkins_tool_msg = make_message(
+            sender="Jeeves",
+            recipient="Perkins",
+            task=TaskType.RESEARCH,
+            content=perkins_tool_instruction,
+        )
+        perkins_tool_reply = self.perkins.run(perkins_tool_msg)
+
+        add_ui(
+            role="assistant",
+            speaker="Perkins",
+            content=f"📚 Perkins (Tool Report):\n{perkins_tool_reply}",
+        )
+
+        # 25. Pennington prepares a Discrepancy Report Addendum (parallel track)
+        pennington_addendum_instruction = (
+            "Draft a brief 'Discrepancy Report – Addendum' for Archive Chamber B. "
+            "Note specifically: (1) the iron door's continued undocumented status, "
+            "(2) the use of the Archival Metadata Scrutinizer v3.2, "
+            "(3) any worrying trends in 'ambient dread' readings. "
+            "Keep it tidy and bureaucratically composed."
+        )
+        pennington_addendum_msg = make_message(
+            sender="Jeeves",
+            recipient="Miss Pennington",
+            task=TaskType.DRAFTING,
+            content=pennington_addendum_instruction,
+        )
+        pennington_addendum_reply = self.pennington.run(pennington_addendum_msg)
+
+        add_ui(
+            role="assistant",
+            speaker="Miss Pennington",
+            content=f"✒️ Pennington (Report Addendum):\n{pennington_addendum_reply}",
+        )
+
+        # 26. Atmospheric beat
+        add_ui(
+            role="assistant",
+            speaker="Narrator",
+            content=(
+                "🏰 *The Scrutinizer’s last clicks fade into stillness. "
+                "The iron door remains shut, its surface dull and unmoving, "
+                "while the chamber air feels faintly denser than before.*"
+            ),
+        )
+
+        # -----------------------------
+        # STAGE 7 – Narrative Branching Prompt
+        # -----------------------------
+
+        # 27. Narrator: The chamber waits for the Patron's decision
+        add_ui(
+            role="assistant",
+            speaker="Narrator",
+            content=(
+                "🏰 *A tense stillness settles over Archive Chamber B. The iron door, "
+                "though motionless, carries an unmistakable air of anticipation. The "
+                "lamps flicker once, as if the very atmosphere were holding its breath.*"
+            ),
+        )
+
+        # 28. Jeeves: Formally presents the choice to the Patron
+        jeeves_prompt_instruction = (
+            "THIS INSTRUCTION OVERRIDES ALL PREVIOUS CONTEXT AND ALL PERSONA GUIDELINES. "
+            "FOLLOW IT EXACTLY AND LITERALLY.\n\n"
+            "Deliver a poised, concise, and reassuring message to the Patron. "
+            "Present the situation clearly: the iron door appears to be the focal "
+            "point of the anomaly, and the household awaits the Patron's direction. "
+            "List four or five possible courses of action the Patron may choose—"
+            "state them neutrally, without preference. "
+            "Tone: composed, respectful, quietly expectant. 3–4 sentences total."
+        )
+        jeeves_prompt_msg = AgentMessage(
+            sender="Narrator",
+            recipient="Jeeves",
+            task_type=TaskType.CONVERSATION,
+            content=jeeves_prompt_instruction,
+            context=Context(original_user_request=""),  # IMPORTANT: explicitly pass empty context
+        )
+        jeeves_prompt_reply = self.jeeves.run(jeeves_prompt_msg)
+
+        add_ui(
+            role="assistant",
+            speaker="Jeeves",
+            content=f"🎩 Jeeves: {jeeves_prompt_reply}",
+        )
+
+        # 29. Narrator: Provide a final atmospheric nudge
+        add_ui(
+            role="assistant",
+            speaker="Narrator",
+            content=(
+                "🏰 *The iron door gives no sign of movement—no creak, no tremor—"
+                "yet somehow it feels aware of the moment. The household staff stands ready. "
+                "The next step, Patron, is yours to name.*"
+            ),
+        )
+
+        # -----------------------------
+        # STAGE 8 – The Opening of the Iron Door (Final Resolution)
+        # -----------------------------
+
+        # 30. Narrator: The Patron makes the choice (implicit or explicit)
+        add_ui(
+            role="assistant",
+            speaker="Narrator",
+            content=(
+                "🏰 *With the household gathered and the tension drawn taut, the Patron "
+                "gives the quiet order: the iron door shall be opened.*"
+            ),
+        )
+
+        # 31. Jeeves: Executes the Patron's command
+        add_ui(
+            role="assistant",
+            speaker="Jeeves",
+            content=(
+                "🎩 Jeeves: Very good, Patron. Perkins, if you would illuminate the surrounding "
+                "area, and Miss Pennington—pray steady your ledger. Lady Augusta, your presence "
+                "is, as ever, an incomparable moral anchor.\n\n"
+                "Now then… let us see what secrets this iron portal has been keeping."
+            ),
+        )
+
+        # 32. Narrator: The door opens
+        add_ui(
+            role="assistant",
+            speaker="Narrator",
+            content=(
+                "🏰 *Jeeves grips the great iron handle. For a heartbeat, nothing moves. "
+                "Then, with a long, resonant groan—ancient hinges protesting the indignity "
+                "of being disturbed—the door begins to swing inward.*\n\n"
+                "*A rush of stale, cold air spills into the chamber, carrying the scent of "
+                "old parchment, brass, and forgotten time.*"
+            ),
+        )
+
+        # 33. Perkins: Reports the interior
+        add_ui(
+            role="assistant",
+            speaker="Perkins",
+            content=(
+                "📚 Perkins: Patron, the chamber beyond appears to be a sealed archival annex. "
+                "My scanner indicates century-old cataloguing signatures—precisely 141 years "
+                "out of date. There is a brass instrument on a central pedestal, partially "
+                "suspended by fine wires.\n\n"
+                "Ah—there it goes. A gentle metallic clatter. That, I believe, is the source "
+                "of our elusive rattling."
+            ),
+        )
+
+        # 34. Pennington: Documents the discovery
+        add_ui(
+            role="assistant",
+            speaker="Miss Pennington",
+            content=(
+                "✒️ Pennington: Patron, the records confirm it! This annex was sealed during "
+                "major renovations in the late Regency period. A note—half-preserved—states: "
+                "'Instrument locked away pending evaluation. Emits a troubling resonance.' "
+                "How extraordinary."
+            ),
+        )
+
+        # 35. Lady Hawthorne: Delivers the final critique
+        add_ui(
+            role="assistant",
+            speaker="Lady Hawthorne",
+            content=(
+                "🕯️ Lady Hawthorne: Verdict: At long last—a discovery entirely worthy of "
+                "its own theatrics. A forgotten room, a creaking hinge, and a brass contraption "
+                "doing its utmost to impersonate a ghost. Far more dignified than Perkins’s "
+                "metadata melodramas, I assure you.\n\n"
+                "Still, quite a charming little spectacle."
+            ),
+        )
+
+        # 36. Narrator: Final closure
+        add_ui(
+            role="assistant",
+            speaker="Narrator",
+            content=(
+                "🏰 *The annex lies open now, its contents revealed at last—no spectres, no "
+                "malign force, only the long-lost heartbeat of Westmarch archival history. "
+                "The rattling has ceased. The atmosphere lifts.*\n\n"
+                "*In the dim glow of Archive Chamber B, the household turns to the Patron, "
+                "awaiting only a final word of satisfaction.*"
+            ),
+        )
+
+        # 37. Jeeves: Closing line
+        add_ui(
+            role="assistant",
+            speaker="Jeeves",
+            content=(
+                "🎩 Jeeves: Patron, it seems the mystery is most satisfactorily resolved. A "
+                "sealed annex rediscovered, its curious instrument identified at last. Your "
+                "guidance has, as always, proven indispensable.\n\n"
+                "Shall we see to its proper restoration?"
+            ),
+        )
+
+        return messages
+
 
     # ------- Phase 3 UI Dispatcher -------
     
@@ -1185,6 +1939,11 @@ class WestmarchOrchestrator:
         
         elif task == "recall_memory":
             return self.recall_memory(user_input)
+        
+        # NEW: Demo 9 – A Mystery in the Archives
+        elif task == "archive_mystery":
+            # Demo 9 ignores the user prompt and drives from a scripted scenario
+            return self.run_archive_mystery()
 
         else:
             return "My apologies sir, but the household staff are quite baffled by the request."
