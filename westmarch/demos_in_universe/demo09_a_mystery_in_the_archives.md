@@ -16,9 +16,13 @@ It illustrates:
 Agents featured:  
 🎩 **Jeeves**, ✒️ **Miss Pennington**, 📚 **Perkins**, 🕯️ **Lady Hawthorne**, and the **Archival Metadata Scrutinizer v3.2** custom tool.
 
+### Abstract (*spoiler alert*)
+
+The mystery centers on a misfiled parchment labeled “UNEXPLAINED RATTLING — DO NOT DISTURB,” which draws the household staff into an increasingly uncanny investigation of Archive Chamber B. What begins as a simple cataloguing anomaly unfolds into a sequence of environmental disturbances—ambient dread, structural tilting, anomalous metadata, and the sudden appearance of an unregistered iron door that should not exist according to any architectural plan. As the agents analyze the chamber, the rattling intensifies and the door exhibits seemingly sentient behavior, prompting fears of a supernatural or historically concealed threat. The mystery is ultimately resolved when the Patron orders the iron door opened, revealing not a haunting but a sealed archival annex forgotten during Regency-era renovations. Inside lies a brass instrument suspended on a pedestal, its subtle mechanical oscillations responsible for the rattling that had echoed through the chamber. Far from an omen or anomaly, the disturbance is simply the neglected heartbeat of long-lost archival history—an obscure device left waiting in the dark, finally rediscovered and properly understood.
+
 ---
 
-# Matters Requiring the Whole Household
+# *A Mystery in the Archives*
 
 ✒️  
 ✒️ **Pennington:**  
