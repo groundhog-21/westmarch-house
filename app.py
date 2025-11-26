@@ -414,31 +414,35 @@ if prompt:
     try:
         if mode == "Parlour Discussions (General Conversation)":
             speaker = "Jeeves"
-            result = orchestrator.run("parlour_discussion", prompt)
+            result = orchestrator.run("parlour_discussion", prompt, selected_mode=mode)
 
         elif mode == "Arrangements for the Day":
             speaker = "Jeeves"
-            result = orchestrator.run("daily_planning", prompt)
+            result = orchestrator.run("daily_planning", prompt, selected_mode=mode)
 
         elif mode == "Matters Requiring Investigation":
             speaker = "Perkins"
-            result = orchestrator.run("research", prompt)
+            result = orchestrator.run("research", prompt, selected_mode=mode)
 
         elif mode == "Correspondence & Drafting":
             speaker = "Miss Pennington"
-            result = orchestrator.run("drafting", prompt)
+            result = orchestrator.run("drafting", prompt, selected_mode=mode)
 
         elif mode == "Records & Summaries from the Archive":
             speaker = "Jeeves"
-            result = orchestrator.run("query_archive", prompt)
+            result = orchestrator.run("archive", prompt, selected_mode=mode)
 
         elif mode == "Her Ladyship's Critique (Proceed with Caution)":
             speaker = "Lady Hawthorne"
-            result = orchestrator.run("critique", prompt)
+            result = orchestrator.run("critique", prompt, selected_mode=mode)
+
+        elif mode == "Jeeves Remembers":
+            speaker = "Jeeves"
+            result = orchestrator.run("recall_memory", prompt, selected_mode=mode)
 
         elif mode == "Matters Requiring the Whole Household":
             speaker = "Jeeves"
-            result = orchestrator.run("whole_household", prompt)
+            result = orchestrator.run("whole_household", prompt, selected_mode=mode)
 
         else:
             speaker = "Jeeves"

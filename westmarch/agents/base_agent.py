@@ -6,6 +6,7 @@ from westmarch.core.messages import AgentMessage, TaskType
 from westmarch.core.models import ModelClient
 
 from westmarch.core.logging import log
+from westmarch.agents.prompts_jeeves import JEEVES_SYSTEM_PROMPT_PARLOUR
 
 
 class BaseAgent(ABC):
@@ -29,13 +30,32 @@ class BaseAgent(ABC):
         prompt = self.system_prompt
 
         # Conversational mode for Jeeves only
-        if self.name == "Jeeves" and message.task_type == TaskType.CONVERSATION:
-            prompt += (
-                "\n\nYou are engaged in informal parlour conversation with the patron. "
-                "Reply in a warm, lightly humorous, conversational tone. "
-                "Be natural and personable, while still maintaining the dignity and grace "
-                "of an English butler. Avoid rigid structure unless specifically requested."
-            )
+        if self.name == "Jeeves":
+            mode = message.context.metadata.get("selected_mode")
+
+            # Modes that should use the normal, non-Patron Jeeves
+            NON_PATRON_MODES = {
+                "Parlour Discussions (General Conversation)",
+                "Arrangements for the Day",
+                "Matters Requiring Investigation",
+                "Correspondence & Drafting",
+                "Records & Summaries from the Archive",
+                "Her Ladyship's Critique (Proceed with Caution)",
+                "Jeeves Remembers",
+            }
+
+            if mode in NON_PATRON_MODES:
+                prompt = JEEVES_SYSTEM_PROMPT_PARLOUR
+
+            # Patron/narrative modes keep original prompt
+            # (Whole Household, Demo 9, others)
+
+            # Add conversational softness
+            if message.task_type == TaskType.CONVERSATION:
+                prompt += (
+                    "\n\nYou are engaged in informal parlour conversation. "
+                    "Reply in a warm, lightly humorous tone."
+                )
 
         return prompt
 

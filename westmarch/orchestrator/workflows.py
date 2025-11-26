@@ -24,10 +24,11 @@ class WestmarchOrchestrator:
         self.pennington = pennington
         self.hawthorne = hawthorne
 
-    def _context(self, user_input: str, previous_outputs=None) -> Context:
+    def _context(self, user_input: str, previous_outputs=None, selected_mode: str = None) -> Context:
         return Context(
             original_user_request=user_input,
             previous_outputs=previous_outputs or [],
+            selected_mode=selected_mode,
         )
 
     # ------- Tier 1 Workflows -------
@@ -216,7 +217,7 @@ class WestmarchOrchestrator:
 
         return jeeves_reply
 
-    def daily_planning(self, user_input: str) -> str:
+    def daily_planning(self, user_input: str, selected_mode: str = None) -> str:
         """
         Jeeves plans the day based on user input. Behavior is conditional:
 
@@ -321,7 +322,10 @@ class WestmarchOrchestrator:
             recipient="Jeeves",
             task_type=TaskType.PLANNING,
             content=planning_instruction,
-            context=self._context(user_input),
+            context = Context(
+                original_user_request=user_input,
+                metadata={"selected_mode": selected_mode}
+            ),
             constraints=Constraints(style="structured"),
         )
 
@@ -343,7 +347,7 @@ class WestmarchOrchestrator:
 
         return plan
 
-    def quick_research(self, user_input: str) -> str:
+    def quick_research(self, user_input: str, selected_mode: str = None) -> str:
         """
         Hybrid approach:
         - Perkins performs the research and replies in his own voice.
@@ -397,7 +401,10 @@ class WestmarchOrchestrator:
                 "Please provide a concise, well-structured research summary "
                 "for the user's request."
             ),
-            context=self._context(user_input),
+            context=Context(
+                original_user_request=user_input,
+                metadata={"selected_mode": selected_mode},
+            ),
         )
 
         log("WORKFLOW: Passing research task to Perkins")
@@ -417,7 +424,7 @@ class WestmarchOrchestrator:
         # ---- 3. Hybrid behaviour: return Perkins’s own words directly ----
         return research
 
-    def draft_short_text(self, user_input: str) -> str:
+    def draft_short_text(self, user_input: str, selected_mode: str = None) -> str:
         """
         Hybrid approach:
         - Miss Pennington transforms the user's rough notes into polished prose,
@@ -456,17 +463,36 @@ class WestmarchOrchestrator:
                 "Certainly, sir. I will set this matter gently to rest within the ledger. "
                 "Whenever fresh words or tidy records are needed, I shall attend at once."
             )
+        # Determine whether the user supplied text to rewrite
+        user_lower = user_input.lower()
+
+        is_rewrite = any(keyword in user_lower for keyword in [
+            "rewrite", "polish", "improve", "edit", "revise",
+            "tidy", "fix this", "clean this", "turn this", "rework"
+        ])
+
+        if is_rewrite:
+            drafting_instruction = (
+                "Please transform the user's notes or rough text into a polished, "
+                "ready-to-send piece of writing. Do not explain your process; simply "
+                "return the finished text."
+            )
+        else:
+            drafting_instruction = (
+                "Please compose a polished, concise piece of writing that fulfills the "
+                "user's request. Do not explain your process; simply return the final "
+                "draft in completed form."
+            )
 
         draft_msg = AgentMessage(
             sender="Jeeves",
             recipient="Miss Pennington",
             task_type=TaskType.DRAFTING,
-            content=(
-                "Please transform the user's notes into a polished, ready-to-send "
-                "piece of writing. Do not explain your process; simply return the "
-                "final text."
+            content=drafting_instruction,
+            context=Context(
+                original_user_request=user_input,
+                metadata={"selected_mode": selected_mode},
             ),
-            context=self._context(user_input),
         )
 
         log("WORKFLOW: Sending drafting task to Miss Pennington")
@@ -488,7 +514,7 @@ class WestmarchOrchestrator:
 
     # ------- Memory-centric Workflow -------
 
-    def query_archive(self, user_input: str) -> str:
+    def query_archive(self, user_input: str, selected_mode: str = None) -> str:
         """
         Query the archive (memory.json) for any notes relevant to the user's request.
         Then ask Miss Pennington to summarise the retrieved content,
@@ -547,7 +573,13 @@ class WestmarchOrchestrator:
 
         # 6. Ask Miss Pennington for a refined summary
         log("WORKFLOW: Passing archive texts to Miss Pennington for summarisation")
-        summary = self.pennington.summarize_text(combined)
+        summary = self.pennington.summarize_text(
+            combined,
+            context=Context(
+                original_user_request=user_input,
+                metadata={"selected_mode": selected_mode},
+            ),
+        )
 
         # 7. Have Jeeves present it in his elegant voice
         log("WORKFLOW: Archive summary ready, passing to Jeeves")
@@ -561,7 +593,11 @@ class WestmarchOrchestrator:
                 "from the Estate archives:\n\n"
                 f"{summary}"
             ),
-            context=self._context(user_input),
+            context=Context(
+                original_user_request=user_input,
+                previous_outputs=[],
+                metadata={"selected_mode": selected_mode},
+            ),
         )
 
         return self.jeeves.run(final_msg)
@@ -597,7 +633,7 @@ class WestmarchOrchestrator:
         """
         return self.summarize_user_memory(user_input)
 
-    def critique_text(self, text_to_critique: str) -> str:
+    def critique_text(self, text_to_critique: str, selected_mode: str = None) -> str:
         """
         Sends ONLY the target text to Lady Hawthorne for critique,
         ensuring she critiques exactly what is provided — whether it
@@ -646,7 +682,11 @@ class WestmarchOrchestrator:
                 "Always conclude your critique with an encouraging remark.\n\n"
                 f"{text_to_critique}"
             ),
-            context=self._context(text_to_critique),
+                context=Context(
+                    original_user_request=text_to_critique,
+                    previous_outputs=[],
+                    metadata={"selected_mode": selected_mode},
+                ),
         )
 
         log("WORKFLOW: Sending raw text directly to Lady Hawthorne")
@@ -665,7 +705,7 @@ class WestmarchOrchestrator:
         # --- 3. Hybrid: return Her Ladyship’s own words directly ---
         return critique_output
     
-    def whole_household(self, user_input: str) -> str:
+    def whole_household(self, user_input: str, selected_mode: str = None) -> str:
         """
         Full multi-agent orchestration workflow.
         """
@@ -712,8 +752,12 @@ class WestmarchOrchestrator:
                 "Use no more than 3 bullet points total. "
                 "Avoid long sentences or extended exposition."
             ),
-            context=self._context(user_input),
+            context=Context(
+                original_user_request=user_input,
+                metadata={"selected_mode": selected_mode},
+            ),
         )
+
         perkins_output = self.perkins.run(research_msg)
 
         # Archive
@@ -741,7 +785,10 @@ class WestmarchOrchestrator:
                     "Maintain Lady Hawthorne’s witty, aristocratic tone but remain concise.\n\n"
                     f"{perkins_output}"
                 ),
-                context=self._context(user_input),
+                context=Context(
+                    original_user_request=user_input,
+                    metadata={"selected_mode": selected_mode},
+                ),
             )
         )
 
@@ -760,10 +807,13 @@ class WestmarchOrchestrator:
                     "written in 4–5 sentences. "
                     "Avoid flourishes, avoid digressions, and do not include commentary "
                     "outside the letter itself. "
-                    "End with a single warm closing line.\n\n"
+                    "End with a single warm closing line, followed by a signature (“Miss Pennington”).\n\n"
                     "Write only the letter."
                 ),
-                context=self._context(user_input),
+                context=Context(
+                    original_user_request=user_input,
+                    metadata={"selected_mode": selected_mode},
+                ),
             )
         )
 
@@ -784,7 +834,10 @@ class WestmarchOrchestrator:
                     "Maintain your aristocratic tone.\n\n"
                     f"{pennington_output}"
                 ),
-                context=self._context(user_input),
+                context=Context(
+                    original_user_request=user_input,
+                    metadata={"selected_mode": selected_mode},
+                ),
             )
         )
 
@@ -799,15 +852,19 @@ class WestmarchOrchestrator:
                 content=(
                     "Lady Hawthorne has critiqued your draft. Please revise the letter using her "
                     "single suggested improvement. The revised letter must be concise, no more "
-                    "than 80–100 words. Keep the tone warm and elegant, avoid ornamentation, and "
-                    "ensure the request for neighbour observations is clear. Do not add new ideas, "
-                    "and do not repeat content from the original draft.\n\n"
+                    "than 80–100 words. End the revised letter with a warm closing line and your "
+                    "signature (“Miss Pennington”). Avoid ornamentation, ensure the request for "
+                    "neighbour observations is clear, and do not add new ideas or repeat content "
+                    "from the original draft.\n\n"
                     "Your original draft:\n"
                     f"{pennington_output}\n\n"
                     "Lady Hawthorne said:\n"
                     f"{hawthorne_letter_feedback}"
                 ),
-                context=self._context(user_input),
+                context=Context(
+                    original_user_request=user_input,
+                    metadata={"selected_mode": selected_mode},
+                ),
             )
         )
 
@@ -825,7 +882,8 @@ class WestmarchOrchestrator:
                     "• be 180–240 words long\n"
                     "• use ONLY the information explicitly provided below\n"
                     "• include a brief reference to, and a single short quote from, each participant's contribution\n"
-                    "• include, as an exception, the FULL TEXT of your revised letter\n"
+                    "• reproduce the FULL TEXT of your revised letter exactly as written, "
+                    "  as its own paragraph or block, without paraphrasing or altering any words\n"
                     "• be structured using a separate paragraph for each participant:\n"
                     "     - Perkins’ investigation\n"
                     "     - Lady Hawthorne’s first interjection\n"
@@ -847,7 +905,10 @@ class WestmarchOrchestrator:
                     f"{pennington_revision}\n\n"
                     "Please now produce your final archival summary."
                 ),
-                context=self._context(user_input),
+                context=Context(
+                    original_user_request=user_input,
+                    metadata={"selected_mode": selected_mode},
+                ),
             )
         )
 
@@ -870,7 +931,10 @@ class WestmarchOrchestrator:
                 "• Then close with one brief, dignified concluding remark.\n\n"
                 f"Here is Miss Pennington’s summary:\n\n{pennington_summary}"
             ),
-            context=self._context(user_input),
+            context=Context(
+                original_user_request=user_input,
+                metadata={"selected_mode": selected_mode},
+            ),
         )
 
         return self.jeeves.run(final_msg)
@@ -1017,7 +1081,7 @@ class WestmarchOrchestrator:
 
         return best_entry
 
-    def recall_memory(self, user_input: str) -> str:
+    def recall_memory(self, user_input: str, selected_mode: str = None) -> str:
         """
         Jeeves retrieves past notes from Miss Pennington’s memory ledger
         that relate to the user's query.
@@ -1154,7 +1218,7 @@ class WestmarchOrchestrator:
             "If you wish to revisit any other matter, I shall be glad to search the ledger again."
         )
     
-    # ------- For Demo 9 -------
+    # ------- FOR DEMO 9 -------
 
     def _make_msg(self, sender: str, recipient: str, task: TaskType, content: str) -> AgentMessage:
         return AgentMessage(
@@ -1910,35 +1974,36 @@ class WestmarchOrchestrator:
 
     # ------- Phase 3 UI Dispatcher -------
     
-    def run(self, task: str, user_input: str) -> str:
+    def run(self, task: str, user_input: str, selected_mode: str = None) -> str:
         task = task.lower()
 
         if task == "parlour_discussion":
-            return self.parlour_discussion(user_input)
+            return self.parlour_discussion(user_input, selected_mode=selected_mode)
       
         elif task == "daily_planning":
-            return self.daily_planning(user_input)
-
+            return self.daily_planning(user_input, selected_mode=selected_mode)
+        
         elif task == "research":
-            return self.quick_research(user_input)
+            return self.quick_research(user_input, selected_mode=selected_mode)
 
         elif task == "drafting":
-            return self.draft_short_text(user_input)
+            return self.draft_short_text(user_input, selected_mode=selected_mode)
         
-        elif task == "query_archive":
-            return self.query_archive(user_input)
+        elif task == "archive":
+            return self.query_archive(user_input, selected_mode=selected_mode)
 
+        
         elif task == "memory_summary":
             return self.memory_summary()
-
+  
         elif task == "critique":
-            return self.critique_text(user_input)
+            return self.critique_text(user_input, selected_mode=selected_mode)
 
         elif task == "whole_household":
             return self.whole_household(user_input)
         
         elif task == "recall_memory":
-            return self.recall_memory(user_input)
+            return self.recall_memory(user_input, selected_mode=selected_mode)
         
         # NEW: Demo 9 – A Mystery in the Archives
         elif task == "archive_mystery":

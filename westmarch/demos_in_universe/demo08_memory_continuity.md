@@ -1,4 +1,4 @@
-# Demo 8 — Memory Demonstration  
+# Demo 8 — Memory Continuity  
 *“What Did I Tell You Yesterday?”*
 
 **User 👤:**  
