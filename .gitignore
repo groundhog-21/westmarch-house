@@ -17,6 +17,8 @@ env/
 *.pem
 *.key
 *service-account*.json
+secrets/
+credentials/
 
 # --- VS Code ---
 .vscode/
@@ -32,3 +34,74 @@ Thumbs.db
 build/
 dist/
 *.egg-info/
+
+# --- Node / Frontend (if any future UI work) ---
+node_modules/
+package-lock.json
+
+# --- Logs & Temp Files ---
+*.log
+logs/
+tmp/
+temp/
+*.tmp
+
+# --- Checkpoints / Experiments / Model Output ---
+checkpoints/
+*.ckpt
+runs/
+outputs/
+wandb/
+mlruns/
+
+# --- Media & Large Files ---
+*.mp4
+*.mov
+*.avi
+*.wav
+*.aiff
+*.psd
+*.xcf
+*.zip
+*.tar.gz
+*.7z
+
+# (Except specific media in final package)
+!media/
+!media/*.png
+!media/*.jpg
+!media/*.md
+
+# --- Jupyter / Notebooks ---
+.ipynb_checkpoints/
+*.ipynb
+notebooks/
+
+# --- Project Working Drafts ---
+scratch/
+drafts/
+old/
+archive/
+backup/
+deprecated/
+
+# --- Kaggle / Submission Prep ---
+final_submission/
+submission.zip
+
+# --- Python packaging ---
+*.whl
+MANIFEST
+MANIFEST.in
+
+# --- Mac metadata ---
+.AppleDouble
+.LSOverride
+
+# --- Profiling ---
+prof/
+*.prof
+
+# --- Other Ignore Directories ---
+.idea/
+*.iml
