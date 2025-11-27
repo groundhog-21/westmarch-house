@@ -138,7 +138,7 @@ class WestmarchOrchestrator:
 
         return found
 
-    def parlour_discussion(self, user_input: str) -> str:
+    def parlour_discussion(self, user_input: str, selected_mode: str = None) -> str:
         """
         General conversation in the parlour.
 
@@ -199,7 +199,10 @@ class WestmarchOrchestrator:
             recipient="Jeeves",
             task_type=TaskType.CONVERSATION,
             content=f"{instruction}\n\nUSER SAID:\n{user_input}",
-            context=context,
+            context = Context(
+                original_user_request=user_input,
+                metadata={"selected_mode": selected_mode}
+            ),
         )
 
         jeeves_reply = self.jeeves.run(msg)

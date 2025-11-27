@@ -2,7 +2,7 @@
 from __future__ import annotations
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 
 
 class TaskType(str, Enum):
@@ -27,6 +27,7 @@ class Context:
     original_user_request: str
     previous_outputs: List[Dict[str, Any]] = field(default_factory=list)
     metadata: Dict[str, Any] = field(default_factory=dict)
+    selected_mode: Optional[str] = None
 
 
 @dataclass
