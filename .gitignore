@@ -13,12 +13,13 @@ env/
 # --- Environment Variables / Secrets ---
 .env
 .env.*
-*.json
 *.pem
 *.key
 *service-account*.json
 secrets/
 credentials/
+
+# NOTE: .json is too broad — moved to the bottom override to allow specific JSON tracking
 
 # --- VS Code ---
 .vscode/
@@ -119,3 +120,22 @@ prof/
 # --- Clipchamp (video-editing project files, large media, exports) ---
 Clipchamp/
 clipchamp/
+
+# ====================================================================
+# --- Westmarch Memory Files (runtime only — NEVER tracked) ---
+# ====================================================================
+
+# Ignore runtime memory files
+westmarch/data/memory.json
+westmarch/data/memory.json.backup
+
+# ====================================================================
+# --- Override earlier "*.json" rule so README.md can track JSON docs
+# ====================================================================
+
+# Allow JSON files everywhere EXCEPT the above memory files
+!*.json
+
+# But keep ignoring these explicitly:
+westmarch/data/memory.json
+westmarch/data/memory.json.backup
