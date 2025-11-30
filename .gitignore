@@ -1,16 +1,22 @@
+# ====================================================================
 # --- Python ---
+# ====================================================================
 __pycache__/
 *.pyc
 *.pyo
 *.pyd
 *.pdb
 
+# ====================================================================
 # --- Virtual Environments ---
+# ====================================================================
 .venv/
 venv/
 env/
 
+# ====================================================================
 # --- Environment Variables / Secrets ---
+# ====================================================================
 .env
 .env.*
 *.pem
@@ -19,13 +25,17 @@ env/
 secrets/
 credentials/
 
-# NOTE: .json is too broad — moved to the bottom override to allow specific JSON tracking
+# NOTE: We do NOT globally ignore *.json — only specific files later.
 
-# --- VS Code ---
+# ====================================================================
+# --- VS Code / Editor ---
+# ====================================================================
 .vscode/
 .history/
 
+# ====================================================================
 # --- OS / Editor Junk ---
+# ====================================================================
 Thumbs.db
 .DS_Store
 desktop.ini
@@ -35,23 +45,31 @@ desktop.ini
 # Windows wallpaper cache
 TranscodedWallpaper*
 
+# ====================================================================
 # --- Build / Dist ---
+# ====================================================================
 build/
 dist/
 *.egg-info/
 
-# --- Node / Frontend (future UI work) ---
+# ====================================================================
+# --- Node / Frontend ---
+# ====================================================================
 node_modules/
 package-lock.json
 
+# ====================================================================
 # --- Logs & Temp Files ---
+# ====================================================================
 *.log
 logs/
 tmp/
 temp/
 *.tmp
 
-# --- Checkpoints / Experiments / Model Output ---
+# ====================================================================
+# --- Checkpoints / Model Output ---
+# ====================================================================
 checkpoints/
 *.ckpt
 runs/
@@ -59,8 +77,10 @@ outputs/
 wandb/
 mlruns/
 
-# --- Media & Large Files ---
-# Block video, audio, and large binary assets
+# ====================================================================
+# --- Media & Large Binary Files ---
+# Block video, audio, large binaries
+# ====================================================================
 *.mp4
 *.mov
 *.avi
@@ -83,12 +103,16 @@ mlruns/
 !media/**/*.jpeg
 !media/**/*.md
 
+# ====================================================================
 # --- Jupyter / Notebooks ---
+# ====================================================================
 .ipynb_checkpoints/
 *.ipynb
 notebooks/
 
-# --- Project Working Drafts ---
+# ====================================================================
+# --- Working Drafts ---
+# ====================================================================
 scratch/
 drafts/
 old/
@@ -96,46 +120,28 @@ archive/
 backup/
 deprecated/
 
-# --- Kaggle / Submission Prep ---
-final_submission/
-submission.zip
-
-# --- Python Packaging ---
-*.whl
-MANIFEST
-MANIFEST.in
-
-# --- Mac metadata ---
-.AppleDouble
-.LSOverride
-
-# --- Profiling ---
-prof/
-*.prof
-
-# --- IDE / Tooling ---
-.idea/
-*.iml
-
+# ====================================================================
 # --- Clipchamp (video-editing project files, large media, exports) ---
-Clipchamp/
-clipchamp/
+# ====================================================================
+
+# Ignore Clipchamp project folder at the repo root
+/Clipchamp/
+/Clipchamp/**
+
+# Also ignore any Clipchamp folders anywhere else (case-insensitive-ish)
+**/Clipchamp/**
+**/clipchamp/**
 
 # ====================================================================
 # --- Westmarch Memory Files (runtime only — NEVER tracked) ---
 # ====================================================================
 
-# Ignore runtime memory files
+# Always ignore these files
 westmarch/data/memory.json
 westmarch/data/memory.json.backup
 
-# ====================================================================
-# --- Override earlier "*.json" rule so README.md can track JSON docs
-# ====================================================================
+# Also ignore any accidental variants
+**/memory.json
+**/memory.json.backup
 
-# Allow JSON files everywhere EXCEPT the above memory files
-!*.json
-
-# But keep ignoring these explicitly:
-westmarch/data/memory.json
-westmarch/data/memory.json.backup
+# ==============
