@@ -133,15 +133,15 @@ deprecated/
 **/clipchamp/**
 
 # ====================================================================
-# --- Westmarch Memory Files (runtime only — NEVER tracked) ---
+# --- Westmarch Memory Files ---
 # ====================================================================
+# Ignore all runtime memory files everywhere in the repo.
+# BUT explicitly track the canonical seeded memory.json used for demos.
+# This ensures deterministic behavior while avoiding accidental commits
+# of runtime memory created during normal agent operation.
 
-# Always ignore these files
-westmarch/data/memory.json
-westmarch/data/memory.json.backup
-
-# Also ignore any accidental variants
+# Ignore all memory.json files by default
 **/memory.json
-**/memory.json.backup
 
-# ==============
+# Allow the official seeded memory file to be version-controlled
+!westmarch/data/memory.json
