@@ -1,6 +1,12 @@
 # 🏰 **The House of Westmarch**
 *A Multi-Agent Concierge Estate of Dubious Decorum*
 
+[![Kaggle Submission](https://img.shields.io/badge/Kaggle-Submitted-20beff?logo=kaggle&logoColor=white)](https://www.kaggle.com/competitions/agents-intensive-capstone-project)
+[![YouTube Video](https://img.shields.io/badge/YouTube-Video-FF0000?logo=youtube&logoColor=white)](https://www.youtube.com/watch?v=3nJ5RnmqvMk)
+[![GitHub Repo](https://img.shields.io/badge/GitHub-Repository-181717?logo=github)](https://github.com/groundhog-21/westmarch-house)
+
+---
+
 Prepared by:
 
 🎩 **Jeeves** — Butler & Orchestrator  
@@ -8,6 +14,9 @@ Prepared by:
 ✒️ **Miss Pennington** — Secretary & Correspondent  
 🕯️ **Lady Hawthorne** — Critic-in-Residence  
 👤 **The Master of the Estate** — *you, dear user*
+
+Created by Andrew Gordon Browne
+for the Kaggle · Community Hackathon · Agents Intensive - Capstone Project
 
 ---
 
@@ -152,25 +161,42 @@ westmarch-house/
 ├── README.md                  # This document
 ├── LICENSE                    # MIT License
 ├── DISCLAIMER                 # Fictional content disclaimer
+├── .gitignore
 │
-├── docs/                      # Writeups, architecture, personas, demos
+├── docs/                      # Writeups & architecture notes
 │   ├── architecture.md
-│   ├── memory.md
-│   ├── personas.md
+│   ├── architecture_diagram.md
+│   ├── demo_9_agentic_features_map.md
 │   ├── kaggle_writeup.md
-│   └── video_script_and_storyboard.md
+│   ├── memory.md
+│   ├── memory_diagram.md
+│   ├── personas.md
+│   ├── personas_diagram.md
+│   └── user_guide.md
 │
 ├── media/                     # Static PNG documentation assets
-│   └── images/                # Crest, personas, diagrams, UI captures
+│   └── images/
 │
-└── westmarch/                 # Core application package
+├── tests/                     # Automated tests
+│   ├── test_critique.py
+│   ├── test_daily_planning.py
+│   ├── test_draft.py
+│   ├── test_env.py
+│   ├── test_full_pipeline.py
+│   ├── test_memory.py
+│   ├── test_memory_logging.py
+│   ├── test_models.py
+│   ├── test_summary.py
+│   └── clean_memory.py
+│
+└── westmarch/                 # Core application
     ├── agents/
     ├── core/
     ├── data/
     ├── demos/
     ├── demos_in_universe/
     ├── orchestrator/
-    └── tests/
+    └── __init__.py
 ```
 
 All video production materials (Clipchamp project, raw exports, etc.)  
