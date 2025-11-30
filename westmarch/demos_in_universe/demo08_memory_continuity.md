@@ -2,7 +2,7 @@
 *“What Did I Tell You Yesterday?”*
 
 **User 👤:**  
-“Jeeves, what did I tell you yesterday about my poem? I’ve quite forgotten.”
+“Jeeves, what did I tell you a few days ago about my poem? I’ve quite forgotten.”
 
 **Jeeves 🎩:**  
 “Indeed, sir. Upon consulting Miss Pennington’s carefully kept ledger, I find the following relevant recollection:”

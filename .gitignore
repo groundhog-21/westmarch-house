@@ -27,15 +27,19 @@ credentials/
 # --- OS / Editor Junk ---
 Thumbs.db
 .DS_Store
+desktop.ini
 *.swp
 *.swo
+
+# Windows wallpaper cache
+TranscodedWallpaper*
 
 # --- Build / Dist ---
 build/
 dist/
 *.egg-info/
 
-# --- Node / Frontend (if any future UI work) ---
+# --- Node / Frontend (future UI work) ---
 node_modules/
 package-lock.json
 
@@ -55,22 +59,28 @@ wandb/
 mlruns/
 
 # --- Media & Large Files ---
+# Block video, audio, and large binary assets
 *.mp4
 *.mov
 *.avi
+*.mkv
+*.webm
 *.wav
 *.aiff
+*.flac
+*.mp3
 *.psd
 *.xcf
 *.zip
 *.tar.gz
 *.7z
 
-# (Except specific media in final package)
+# Allow ONLY specific media folder and safe formats
 !media/
-!media/*.png
-!media/*.jpg
-!media/*.md
+!media/**/*.png
+!media/**/*.jpg
+!media/**/*.jpeg
+!media/**/*.md
 
 # --- Jupyter / Notebooks ---
 .ipynb_checkpoints/
@@ -89,7 +99,7 @@ deprecated/
 final_submission/
 submission.zip
 
-# --- Python packaging ---
+# --- Python Packaging ---
 *.whl
 MANIFEST
 MANIFEST.in
@@ -102,6 +112,10 @@ MANIFEST.in
 prof/
 *.prof
 
-# --- Other Ignore Directories ---
+# --- IDE / Tooling ---
 .idea/
 *.iml
+
+# --- Clipchamp (video-editing project files, large media, exports) ---
+Clipchamp/
+clipchamp/

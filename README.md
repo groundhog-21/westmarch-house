@@ -1,5 +1,5 @@
-🏰 **The House of Westmarch**  
-*A Multi-Agent Estate for the Conduct of Daily Affairs*
+# 🏰 **The House of Westmarch**
+*A Multi-Agent Concierge Estate of Dubious Decorum*
 
 Prepared by:
 
@@ -11,20 +11,30 @@ Prepared by:
 
 ---
 
-# **Welcome to the Estate**
+# 🎬 **Project Overview Video**
+
+**📺 YouTube (2 minutes):**  
+https://youtu.be/3nJ5RnmqvMk
+
+*A short guided tour of the Estate, its capabilities, and its household staff.*
+
+---
+
+# 👋 **Welcome to the Estate**
 
 Pray, step inside.
 
-**The House of Westmarch** is a fully-fledged, multi-agent system disguised as an Edwardian household.  
-Instead of command-line flags and API chains, you issue direction to your staff:
+**The House of Westmarch** is a fully-fledged multi-agent system disguised as an Edwardian household.  
+Instead of issuing commands to CLI scripts, you simply address your staff:
 
-- 🎩 **Jeeves** handles planning, orchestration, memory, and etiquette.  
-- 📚 **Perkins** conducts research with great zeal (and occasionally alarm).  
-- ✒️ **Miss Pennington** transforms chaos into polished prose.  
-- 🕯️ **Lady Hawthorne** critiques with immaculate severity.  
+- 🎩 **Jeeves** — planning, orchestration, etiquette, memory, model selection  
+- 📚 **Perkins** — research, investigation, tool use  
+- ✒️ **Miss Pennington** — drafting, polishing, refinement, transformation  
+- 🕯️ **Lady Hawthorne** — critique and rhetorical severity  
 
-Behind the wallpaper lies a **Gemini-powered + OpenAI-powered**, orchestrated, tool-using, stateful multi-agent system.  
-On the surface, however, it is an Estate where one simply rings for the butler.
+Beneath the wallpaper lies an orchestrated, tool-using, stateful, hybrid **Gemini + OpenAI** system  
+—with persona logic, memory, and structured workflows.  
+On the surface, it is simply a well-run Estate.
 
 ---
 
@@ -33,74 +43,78 @@ On the surface, however, it is an Estate where one simply rings for the butler.
 Upon launching the Estate, you will be greeted by the sidebar selector:
 
 ### **Choose Mode**
-- **Parlour Discussions (General Conversation)**  
-- **Arrangements for the Day**  
-- **Matters Requiring Investigation**  
-- **Correspondence & Drafting**  
-- **Records & Summaries from the Archive**  
-- **Her Ladyship's Critique (Proceed with Caution)**  
-- **Matters Requiring the Whole Household**  
-- **Jeeves Remembers**
+- Parlour Discussions (General Conversation)  
+- Arrangements for the Day  
+- Matters Requiring Investigation  
+- Correspondence & Drafting  
+- Records & Summaries from the Archive  
+- Her Ladyship’s Critique (Proceed with Caution)  
+- Matters Requiring the Whole Household  
+- Jeeves Remembers  
 
-These correspond precisely to the agent workflows defined in `westmarch/orchestrator/`.  
-Selecting a mode routes your input through the correct chain of agents and tools.
+Each mode corresponds to a structured orchestrated workflow in  
+`westmarch/orchestrator/`.
 
 ---
 
 # 🧭 **Architecture Overview**
 
-The Estate is arranged as follows:
+The Estate is organised into several halls and chambers:
 
-## 🏛️ **Orchestration Hall — `westmarch/orchestrator/`**
-- **router.py** — dispatches requests to the appropriate staff  
-- **workflows.py** — defines structured multi-agent sequences  
-  (e.g., *research → drafting → critique → summarisation*)
+## 🏛️ Orchestration Hall — `westmarch/orchestrator/`
+- `router.py` — dispatches requests  
+- `workflows.py` — defines multi-agent sequences  
+- Shared agentical utilities
 
-## 📚 **Core Services — `westmarch/core/`**
-- **models.py** — configures **Gemini 1.5** and **OpenAI** model clients  
-- **memory.py** — session & long-term memory (stored in `westmarch/data/`)  
-- **messages.py** — structured internal message schema  
-- **logging.py** — observability & debug utilities  
+## 📚 Core Services — `westmarch/core/`
+- `models.py` — Gemini + OpenAI model clients  
+- `memory.py` — session + long-term memory  
+- `messages.py` — structured schema for internal exchange  
+- Logging, configuration, infrastructure
 
-## 🧑‍🤝‍🧑 **Household Staff — `westmarch/agents/`**
-- 🎩 **jeeves.py** — planner, orchestrator, etiquette engine  
-- 📚 **perkins.py** — research valet; investigative reasoning & tool use  
-- ✒️ **miss_pennington.py** — drafting, refinement, rewriting, summarisation  
-- 🕯️ **lady_hawthorne.py** — critique, rhetorical evaluation, literary inspection  
-- **base_agent.py** — shared behaviours, message formats, tool invocation  
+## 🧑‍🤝‍🧑 Household Staff — `westmarch/agents/`
+- `jeeves.py`  
+- `perkins.py`  
+- `miss_pennington.py`  
+- `lady_hawthorne.py`  
+- `base_agent.py`
 
-## 🎞️ **Demonstrations**
-- **Technical demos:** `westmarch/demos/`  
-- **In-universe theatrical demos:** `westmarch/demos_in_universe/`  
+## 🎞️ Demonstrations
+- `westmarch/demos/` — technical demonstrations  
+- `westmarch/demos_in_universe/` — narrative theatrical demos (1–9)
+
+For detailed diagrams and notes, see:  
+`docs/architecture.md`  
+`docs/memory.md`  
+`docs/personas.md`
 
 ---
 
-# 🎭 **In-Universe Demonstrations (Demos 1–9)**
+# 🎭 **In-Universe Demonstrations (1–9)**
 
-Each demonstration is a standalone narrative designed to illustrate particular agent capabilities, including memory, multi-agent routing, critique, and structured investigation.
+Each demonstration is a self-contained narrative illustrating specific agentic features.
 
 Located in `westmarch/demos_in_universe/`:
 
-1. **Parlour Discussions** — Introduction to the staff  
-2. **Arrangements for the Day** — Daily planning  
-3. **Matters Requiring Investigation** — Teacup psychology  
-4. **Correspondence & Drafting** — Chaotic notes rescued by Miss Pennington  
-5. **Archive Summaries** — Jeeves summarises a disastrous household project  
-6. **Her Ladyship’s Critique** — “O Languid Moon of Yesteryear”  
-7. **The Case of the Misbehaving Garden Gnome** — Multi-agent orchestration  
-8. **Memory Demonstration** — “What Did I Tell You Yesterday?”  
-9. **A Mystery in the Archives** — *fully automated demo run through Streamlit*  
+1. Parlour Discussions — introduction to the staff  
+2. Arrangements for the Day — daily planning  
+3. Matters Requiring Investigation — teacup psychology  
+4. Correspondence & Drafting — chaotic notes rescued by Pennington  
+5. Archive Summaries — Jeeves summarises a disastrous project  
+6. Her Ladyship’s Critique — “O Languid Moon of Yesteryear”  
+7. The Case of the Misbehaving Garden Gnome — multi-agent orchestration  
+8. Memory Demonstration — “What Did I Tell You Yesterday?”  
+9. **A Mystery in the Archives** — fully automated Streamlit demonstration  
 
-Demo 9 showcases:
-
+### Demo 9 specifically showcases:
 - multi-agent orchestration  
-- looped reasoning  
-- state transitions  
+- looped reasoning cycles  
+- tool invocation  
 - critique escalation  
-- tool use  
-- archival metadata analysis  
-- pause/resume logic  
-- theatrical voice consistency  
+- long-term memory usage  
+- sequential and parallel reasoning  
+- pause/resume operations  
+- stable theatrical character voices  
 
 ---
 
@@ -108,7 +122,7 @@ Demo 9 showcases:
 
 ## **Prerequisites**
 - Python **3.11+**  
-- API keys for **Gemini** *and* **OpenAI**, stored in `.env`  
+- API keys for **Gemini** and **OpenAI** stored in `.env`  
 - A virtual environment is recommended  
 
 ## **Install dependencies**
@@ -121,12 +135,14 @@ pip install -r requirements.txt
 streamlit run app.py
 ```
 
-Navigate to the terminal’s printed URL (usually `http://localhost:8501`).  
+Navigate to the URL printed in your terminal (usually:  
+`http://localhost:8501`).
+
 You will be welcomed by the assembled staff.
 
 ---
 
-# 🏛️ **Repository Layout**
+# 🗂️ **Repository Layout**
 
 ```
 westmarch-house/
@@ -137,31 +153,34 @@ westmarch-house/
 ├── LICENSE                    # MIT License
 ├── DISCLAIMER                 # Fictional content disclaimer
 │
-├── assets/                    # UI assets, diagrams, thumbnails
-├── docs/                      # Kaggle writeup, architecture notes, video script
+├── docs/                      # Writeups, architecture, personas, demos
+│   ├── architecture.md
+│   ├── memory.md
+│   ├── personas.md
+│   ├── kaggle_writeup.md
+│   └── video_script_and_storyboard.md
+│
+├── media/                     # Static PNG documentation assets
+│   └── images/                # Crest, personas, diagrams, UI captures
 │
 └── westmarch/                 # Core application package
-    ├── agents/                # Jeeves, Perkins, Miss Pennington, Lady Hawthorne
-    ├── core/                  # Models, memory system, message formatting
-    ├── data/                  # memory.json & related state
-    ├── demos/                 # Technical demonstrations
-    ├── demos_in_universe/     # Narrative theatrical scripts (1–9)
-    ├── orchestrator/          # Routing and multi-agent workflows
-    └── tests/                 # Automated behavioural tests
+    ├── agents/
+    ├── core/
+    ├── data/
+    ├── demos/
+    ├── demos_in_universe/
+    ├── orchestrator/
+    └── tests/
 ```
 
----
-
-# 🎬 **Video Demonstration**
-
-*(Link to be added upon upload — required for Kaggle submission.)*  
-Runtime target: **2–3 minutes**, with **Jeeves narration**.
+All video production materials (Clipchamp project, raw exports, etc.)  
+are intentionally excluded and remain local.
 
 ---
 
-# 📄 **Write-Up Summary (Required for Review)**
+# 📝 **Technical Write-Up (Required for Review)**
 
-A comprehensive technical writeup is included in:
+The full competition narrative is located in:
 
 ```
 docs/kaggle_writeup.md
@@ -170,36 +189,36 @@ docs/kaggle_writeup.md
 It covers:
 
 - System design  
-- Multi-agent reasoning  
-- Memory & state  
-- Tool invocation  
-- Orchestration patterns  
-- Demo breakdowns  
-- Challenges & limitations  
+- Orchestration architecture  
+- Agent interactions  
+- Memory system  
+- Tool invocation and search  
+- Demonstration breakdowns  
+- Limitations & future directions  
 
 ---
 
 # ⚖️ **Licensing & Disclaimer**
 
 - **License:** MIT  
-- **Disclaimer:** All characters, voices, and behaviours are fictional.  
-  No warranty is provided. Use at your own discretion.
+- **Disclaimer:** All characters and behaviours are fictional.  
+  No warranty is provided. Exercise reason and decorum.
 
 ---
 
 # 🎩 **A Final Note from the Staff**
 
 🎩 **Jeeves:**  
-“Should you wish to expand the Estate — perhaps a librarian, a gardener, or a historian — I remain at your command.”
+“At any hour, sir, I remain at your disposal.”
 
 📚 **Perkins:**  
-“I stand ready for further investigative duties, sir.”
+“Investigations await! Simply give the word.”
 
 ✒️ **Miss Pennington:**  
-“Do call upon me for drafts, summaries, or documentation refinements.”
+“I stand ready with paper, ink, and refinement.”
 
 🕯️ **Lady Hawthorne:**  
-“If you *must* write more code, at least ensure it is readable.”
+“Do behave yourself—and write cleanly.”
 
 We remain, as ever,  
 **At your service.**
