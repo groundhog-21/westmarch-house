@@ -10,6 +10,7 @@ from westmarch.agents.perkins import PerkinsAgent
 from westmarch.agents.miss_pennington import MissPenningtonAgent
 from westmarch.agents.lady_hawthorne import LadyHawthorneAgent
 from westmarch.core.logging import log
+from westmarch.core.tagging import infer_domains
 
 class WestmarchOrchestrator:
     def __init__(
@@ -32,111 +33,6 @@ class WestmarchOrchestrator:
         )
 
     # ------- Tier 1 Workflows -------
-
-    # ---------------------------------------------------------
-    # For memory recall
-    # ---------------------------------------------------------
-
-    DOMAIN_KEYWORDS = {
-        # Literary & creative writing
-        "poetry": [
-            "poem", "poetry", "verse", "stanza", "line", "couplet", "sonnet",
-            "metaphor", "imagery", "languid moon"
-        ],
-
-        # Financial topics
-        "finance": [
-            "finance", "invest", "investing", "investment", "stock", "stocks",
-            "market", "fund", "funds", "etf", "etfs", "index fund",
-            "mutual fund", "portfolio", "capital"
-        ],
-
-        # Gnome incidents & garden mysteries
-        "gnome": [
-            "gnome", "garden gnome", "waistcoat", "green waistcoat",
-            "horticultural", "paving stones", "wandering gnome"
-        ],
-
-        # Meteorological queries
-        "weather": [
-            "weather", "forecast", "rain", "sunny", "cloudy", "wind",
-            "temperature", "cold", "warm"
-        ],
-
-        # Daily agendas & planning
-        "schedule": [
-            "plan", "schedule", "agenda", "appointment",
-            "calendar", "daily plan", "itinerary"
-        ],
-
-        # Drafting & correspondence
-        "drafting": [
-            "email", "letter", "draft", "compose", "correspondence",
-            "write", "rewrite", "note"
-        ],
-
-        # Research queries (Perkins)
-        "research": [
-            "research", "investigate", "investigation", "analysis",
-            "summary", "report"
-        ],
-
-        # Historical & archival material
-        "history": [
-            "history", "historical", "estate", "westmarch", "archive", "timeline"
-        ],
-
-        # General conversation (parlour interactions)
-        "parlour": [
-            "parlour", "chat", "conversation", "talk", "discuss"
-        ],
-
-        # Critique domain (Lady Hawthorne)
-        "critique": [
-            "critique", "review", "appraisal", "assessment"
-        ],
-
-        # Sports (new domain per your instruction)
-        "sports": [
-            "sport", "sports", "tennis", "match", "tournament",
-            "score", "set", "athlete", "competition"
-        ]
-    }
-
-    @staticmethod
-    def infer_domains(text: str) -> set:
-        """
-        Infer semantic domains from a block of text.
-
-        Improvements:
-        - Handles multi-word phrases cleanly.
-        - Uses whole-word matching for single tokens.
-        - Normalizes text for consistent comparisons.
-        """
-        t = text.lower()
-
-        # Normalized token set for whole-word matching
-        tokens = set(t.replace(",", " ").replace(".", " ").split())
-
-        found: set[str] = set()
-
-        for domain, keywords in WestmarchOrchestrator.DOMAIN_KEYWORDS.items():
-            for kw in keywords:
-                kw_lower = kw.lower()
-
-                # Case 1: multi-word phrase (“garden gnome”)
-                if " " in kw_lower:
-                    if kw_lower in t:       # non-fuzzy exact phrase match
-                        found.add(domain)
-                        break
-
-                # Case 2: single word (“gnome”, “fund”)
-                else:
-                    if kw_lower in tokens:
-                        found.add(domain)
-                        break
-
-        return found
 
     def parlour_discussion(self, user_input: str, selected_mode: str = None) -> str:
         """
@@ -208,13 +104,29 @@ class WestmarchOrchestrator:
         jeeves_reply = self.jeeves.run(msg)
         log("WORKFLOW: Parlour discussion reply generated")
 
+        # --- NEW: Attach only workflow-specific tags ---
+        # Domain tags will now be inferred *only* inside Miss Pennington’s save_note()
+        # based on the user_input tracked there.
+        # Here we add ONLY the workflow label, never domain labels.
+        extra_tags = ["type:parlour"]
+
         # Archive the exchange via Miss Pennington as a parlour log entry
+        # Pennington will:
+        #   - infer domain tags from the user's original request,
+        #   - add "auto",
+        #   - append these workflow-specific tags,
+        # resulting in clean, deduplicated metadata.
         try:
             self.pennington.save_note(
-                "Parlour discussion entry:\n\n"
-                f"USER SAID:\n{user_input}\n\n"
-                f"JEEVES REPLIED:\n{jeeves_reply}"
+                content=(
+                    "Parlour discussion entry:\n\n"
+                    f"USER SAID:\n{user_input}\n\n"
+                    f"JEEVES REPLIED:\n{jeeves_reply}"
+                ),
+                raw_user_input=user_input,
+                extra_tags=extra_tags,
             )
+
         except Exception as e:
             log(f"WORKFLOW: Warning – could not save parlour note to memory → {e}")
 
@@ -267,7 +179,12 @@ class WestmarchOrchestrator:
             # Save the approval as a finalized-plan memory entry
             try:
                 self.pennington.save_note(
-                    f"Daily plan finalized:\n\nUSER APPROVAL:\n{user_input}"
+                    content=(
+                        "Daily plan finalized:\n\n"
+                        f"USER APPROVAL:\n{user_input}"
+                    ),
+                    raw_user_input=user_input,            # <-- CRUCIAL
+                    extra_tags=["type:planning"],         # <-- WORKFLOW TAG
                 )
             except Exception as e:
                 log(f"WORKFLOW: Warning – could not save finalized plan → {e}")
@@ -342,8 +259,13 @@ class WestmarchOrchestrator:
         # Save the plan in Pennington's memory
         try:
             self.pennington.save_note(
-                f"Daily plan created based on user request:\n\n"
-                f"REQUEST:\n{user_input}\n\nPLAN:\n{plan}"
+                content=(
+                    "Daily plan created based on user request:\n\n"
+                    f"REQUEST:\n{user_input}\n\n"
+                    f"PLAN:\n{plan}"
+                ),
+                raw_user_input=user_input,             # <-- CRUCIAL
+                extra_tags=["type:planning"],          # <-- WORKFLOW TAG
             )
         except Exception as e:
             log(f"WORKFLOW: Warning – could not save plan to memory → {e}")
@@ -417,8 +339,13 @@ class WestmarchOrchestrator:
         log("WORKFLOW: Research completed, archiving in memory")
         try:
             self.pennington.save_note(
-                f"Research performed for user request:\n\n"
-                f"REQUEST:\n{user_input}\n\nRESEARCH SUMMARY:\n{research}"
+                content=(
+                    "Research performed for user request:\n\n"
+                    f"REQUEST:\n{user_input}\n\n"
+                    f"RESEARCH SUMMARY:\n{research}"
+                ),
+                raw_user_input=user_input,           # <-- CRUCIAL for domain tagging
+                extra_tags=["type:research"],        # <-- WORKFLOW TAG
             )
             log("WORKFLOW: Research note archived successfully")
         except Exception as e:
@@ -431,16 +358,17 @@ class WestmarchOrchestrator:
         """
         Hybrid approach:
         - Miss Pennington transforms the user's rough notes into polished prose,
-          and replies directly in her own voice.
+        and replies directly in her own voice.
         - The resulting draft is archived in memory.
         - Jeeves remains the orchestrator (he frames the task and context),
-          but does not rewrite the draft.
+        but does not rewrite the draft.
         """
 
         log("WORKFLOW: Drafting workflow initiated")
 
-        # Closure detection
+        # ---- 0. Closure detection ----
         lower = user_input.lower().strip()
+
         approval_phrases = [
             "thank you",
             "that will do",
@@ -460,15 +388,15 @@ class WestmarchOrchestrator:
             "dismissed",
         ]
 
-        if any(phrase in lower for phrase in approval_phrases):
-            log("WORKFLOW: Detected approval/closure in research mode; no new research call")
+        if lower in approval_phrases:
+            log("WORKFLOW: Detected closure in drafting mode; no new drafting call")
             return (
                 "Certainly, sir. I will set this matter gently to rest within the ledger. "
                 "Whenever fresh words or tidy records are needed, I shall attend at once."
             )
-        # Determine whether the user supplied text to rewrite
-        user_lower = user_input.lower()
 
+        # ---- 1. Determine whether input is a rewrite ----
+        user_lower = user_input.lower()
         is_rewrite = any(keyword in user_lower for keyword in [
             "rewrite", "polish", "improve", "edit", "revise",
             "tidy", "fix this", "clean this", "turn this", "rework"
@@ -487,6 +415,7 @@ class WestmarchOrchestrator:
                 "draft in completed form."
             )
 
+        # ---- 2. Generate the draft via Miss Pennington ----
         draft_msg = AgentMessage(
             sender="Jeeves",
             recipient="Miss Pennington",
@@ -501,18 +430,29 @@ class WestmarchOrchestrator:
         log("WORKFLOW: Sending drafting task to Miss Pennington")
         draft = self.pennington.run(draft_msg)
 
-        # Archive the drafted text
+        # ---- 3. Archive the drafted text ----
         log("WORKFLOW: Draft completed, archiving in memory")
+
         try:
             self.pennington.save_note(
-                f"Drafted text based on user request:\n\n"
-                f"REQUEST:\n{user_input}\n\nDRAFT:\n{draft}"
+                content=(
+                    "Drafted text based on user request:\n\n"
+                    f"REQUEST:\n{user_input}\n\nDRAFT:\n{draft}"
+                ),
+
+                # NEW: pass raw_user_input for domain inference
+                raw_user_input=user_input,
+
+                # NEW: correct workflow tag
+                extra_tags=["type:drafting"],
             )
+
             log("WORKFLOW: Draft note archived successfully")
+
         except Exception as e:
             log(f"WORKFLOW: Warning – could not save drafted text to memory → {e}")
 
-        # Hybrid: respond in Miss Pennington’s own voice
+        # ---- 4. Return draft in Pennington’s voice ----
         return draft
 
     # ------- Memory-centric Workflow -------
@@ -526,7 +466,7 @@ class WestmarchOrchestrator:
 
         log("WORKFLOW: Archive query initiated")
 
-        # 0. Approval / closure detection
+        # Approval / closure detection
         closing_phrases = [
             "that will suffice",
             "that will do nicely",
@@ -543,18 +483,34 @@ class WestmarchOrchestrator:
                 "Do let me know if you require anything further."
             )
 
-        # 1. Load all memory
+        domains = infer_domains(user_input)
+        log(f"MEMORY-RECALL: Jeeves infers query domains → {domains}")
+
+        # Load all memory
         all_notes = self.pennington.load_all_notes()
 
-        # 2. Perform matching using years prior to 2000 — the perfect filter
+        # Domain-based matching first, year-based fallback second
         import re
 
-        matches = [
-            note for note in all_notes
-            if re.search(r"\b(1[0-9]{3})\b", note["content"])
-        ]
+        matches = []
 
-        # 3. Debug logging
+        # Primary search: domain-tagged notes
+        if domains:
+            log("MEMORY-RECALL: Searching for domain-tagged matches...")
+            for note in all_notes:
+                tags = note.get("tags", [])
+                if any(f"domain:{d}" in tags for d in domains):
+                    matches.append(note)
+
+        # Fallback to historical year-based notes
+        if not matches:
+            log("MEMORY-RECALL: Falling back to historical year-based search...")
+            matches = [
+                note for note in all_notes
+                if re.search(r"\b(1[0-9]{3})\b", note["content"])
+            ]
+
+        # Debug logging — unchanged
         if not matches:
             log("WORKFLOW: Archive query found NO historical matches")
         else:
@@ -564,17 +520,17 @@ class WestmarchOrchestrator:
                 tags = note.get("tags", [])
                 log(f"WORKFLOW: Historical Match #{idx} | tags={tags} | preview={preview}...")
 
-        # 4. No matches? Inform the patron politely
+        # No matches? Inform the patron politely
         if not matches:
             return (
                 "I regret to say, sir, that the archives contain no records "
                 "relevant to your request. Might you wish to phrase it differently?"
             )
 
-        # 5. Combine matching entries
+        # Combine matching entries
         combined = "\n\n---\n\n".join(note["content"] for note in matches)
 
-        # 6. Ask Miss Pennington for a refined summary
+        # Ask Miss Pennington for a refined summary
         log("WORKFLOW: Passing archive texts to Miss Pennington for summarisation")
         summary = self.pennington.summarize_text(
             combined,
@@ -584,7 +540,7 @@ class WestmarchOrchestrator:
             ),
         )
 
-        # 7. Have Jeeves present it in his elegant voice
+        # Have Jeeves present it in his elegant voice
         log("WORKFLOW: Archive summary ready, passing to Jeeves")
 
         final_msg = AgentMessage(
@@ -698,8 +654,13 @@ class WestmarchOrchestrator:
         # --- 2. Archive the critique in memory (via Pennington) ---
         try:
             self.pennington.save_note(
-                "Critique requested from Lady Hawthorne:\n\n"
-                f"TEXT:\n{text_to_critique}\n\nCRITIQUE:\n{critique_output}"
+                content=(
+                    "Critique requested from Lady Hawthorne:\n\n"
+                    f"TEXT:\n{text_to_critique}\n\n"
+                    f"CRITIQUE:\n{critique_output}"
+                ),
+                raw_user_input=text_to_critique,     # <-- CRUCIAL: domain inference happens here
+                extra_tags=["type:critique"],        # <-- WORKFLOW TAG ONLY
             )
             log("WORKFLOW: Critique note archived successfully")
         except Exception as e:
@@ -762,14 +723,6 @@ class WestmarchOrchestrator:
         )
 
         perkins_output = self.perkins.run(research_msg)
-
-        # Archive
-        try:
-            self.pennington.save_note(
-                f"[Whole Household] Perkins investigation:\nUSER REQUEST:\n{user_input}\n\nOUTPUT:\n{perkins_output}"
-            )
-        except Exception as e:
-            log(f"Warning — could not save Perkins output → {e}")
 
         # -------------------------------------------------------
         # 2. Lady Hawthorne — Interjects
@@ -872,7 +825,7 @@ class WestmarchOrchestrator:
         )
 
         # -------------------------------------------------------
-        # 6A. Miss Pennington summarises all steps
+        # 6A. Miss Pennington summarises all steps AND archive
         # -------------------------------------------------------
         pennington_summary = self.pennington.run(
             AgentMessage(
@@ -914,6 +867,21 @@ class WestmarchOrchestrator:
                 ),
             )
         )
+
+        # Archive the entire workflow in memory
+        try:
+            self.pennington.save_note(
+                content=(
+                    "[Whole Household Workflow Summary]\n\n"
+                    f"USER REQUEST:\n{user_input}\n\n"
+                    f"FINAL SUMMARY:\n{pennington_summary}"
+                ),
+                raw_user_input=user_input,
+                extra_tags=["type:whole-household"],
+            )
+            log("WORKFLOW: Whole-household summary archived successfully")
+        except Exception as e:
+            log(f"WORKFLOW: Warning – could not save whole-household summary → {e}")
 
         # -------------------------------------------------------
         # 6B. Jeeves presents Miss Pennington's summary
@@ -1125,21 +1093,20 @@ class WestmarchOrchestrator:
         # -----------------------------------------------------
         log(f"MEMORY-RECALL: Jeeves notes the user's inquiry → '{lower}'")
         log("MEMORY-RECALL: Extracting keywords from query…")
-        user_domains = self.infer_domains(lower)
+        user_domains = infer_domains(lower)
         log(f"MEMORY-RECALL: Jeeves infers query domains → {user_domains}")
 
         # -----------------------------------------------------
-        # 2. Ask Miss Pennington for all notes (raw candidates)
+        # 2. Ask Miss Pennington for all notes
         # -----------------------------------------------------
         log("MEMORY-RECALL: Consulting Miss Pennington’s ledger for candidate entries…")
-        all_notes = self.pennington.load_all_notes()  # or whatever your method is called
+        all_notes = self.pennington.load_all_notes()
         log(f"MEMORY: Loaded {len(all_notes)} notes from the ledger")
 
         # -----------------------------------------------------
-        # 3. Score each note against the query
+        # 3. Score each note against the query (keyword overlap)
         # -----------------------------------------------------
         def score_entry(content: str, query: str) -> int:
-            # Very simple keyword overlap scoring for now
             q_words = set(query.split())
             score = 0
             for w in q_words:
@@ -1162,11 +1129,11 @@ class WestmarchOrchestrator:
                 "If you recall even a fragment more, I should be delighted to search again."
             )
 
-        # Sort by descending score
+        # Sort top → bottom
         candidates.sort(key=lambda pair: pair[0], reverse=True)
 
         # -----------------------------------------------------
-        # 4. Log only the TOP 10 candidates
+        # 4. Log top 10 candidates
         # -----------------------------------------------------
         top_candidates = candidates[:10]
         top_best_score = top_candidates[0][0]
@@ -1180,32 +1147,40 @@ class WestmarchOrchestrator:
             log(f"MEMORY-RECALL: • score {score:2d} → {snippet}")
 
         # -----------------------------------------------------
-        # 5. Apply strict domain prioritization (on top 10 only)
+        # 5. Domain filtering (correct tag-based extraction)
         # -----------------------------------------------------
-        log("MEMORY-RECALL: Checking for domain coherence (finance, poetry, gnomes)…")
+        log("MEMORY-RECALL: Checking for domain coherence using TAGS…")
 
-        chosen_entry: Optional[dict] = None
+        def extract_domains_from_tags(entry):
+            tags = entry.get("tags", [])
+            return {
+                t.split(":", 1)[1]
+                for t in tags
+                if t.startswith("domain:")
+            }
+
+        chosen_entry = None
 
         for score, entry in top_candidates:
-            content = entry.get("content", "") or ""
-            entry_domains = self.infer_domains(content)
-            log(f"MEMORY-RECALL: Ledger entry domains → {entry_domains}")
+            entry_domains = extract_domains_from_tags(entry)
+            log(f"MEMORY-RECALL: Ledger entry domains (tag-based) → {entry_domains}")
 
-            # Domain logic:
-            # - If user_domains is empty, allow anything.
-            # - If entry has no domains, allow it (fallback).
-            # - Otherwise, require intersection.
-            if not user_domains or not entry_domains or (user_domains & entry_domains):
+            if user_domains:
+                # Require domain overlap
+                if entry_domains and (user_domains & entry_domains):
+                    chosen_entry = entry
+                    log("MEMORY-RECALL: Domain-coherent match found.")
+                    break
+            else:
+                # No user domains → accept high score
                 chosen_entry = entry
-                log("MEMORY-RECALL: A suitable recollection has been selected for presentation.")
+                log("MEMORY-RECALL: No user domain → selecting top candidate.")
                 break
 
-        # If no domain-coherent entry found among top 10,
-        # fall back to the single best-scoring candidate overall.
+        # Fallback: top-scoring entry
         if chosen_entry is None:
             _, chosen_entry = top_candidates[0]
-            log("MEMORY-RECALL: No domain-coherent candidate found; "
-                "falling back to the highest-scoring entry.")
+            log("MEMORY-RECALL: No domain-coherent candidate found; using top-scoring entry.")
 
         log("MEMORY-RECALL: --- END OF MEMORY RECALL WORKFLOW ---")
 

@@ -1,6 +1,8 @@
 # 🏰 **The House of Westmarch**
 *A Multi-Agent Concierge Estate of Dubious Decorum*
 
+🧾 Current Version: **v1.0.3 – Domain-Aware Memory Tagging**
+
 [![Kaggle Submission](https://img.shields.io/badge/Kaggle-Submitted-20beff?logo=kaggle&logoColor=white)](https://www.kaggle.com/competitions/agents-intensive-capstone-project)
 [![YouTube Video](https://img.shields.io/badge/YouTube-Video-FF0000?logo=youtube&logoColor=white)](https://www.youtube.com/watch?v=3nJ5RnmqvMk)
 [![GitHub Repo](https://img.shields.io/badge/GitHub-Repository-181717?logo=github)](https://github.com/groundhog-21/westmarch-house)
@@ -80,7 +82,8 @@ The Estate is organised into several halls and chambers:
 - `models.py` — Gemini + OpenAI model clients  
 - `memory.py` — session + long-term memory  
 - `messages.py` — structured schema for internal exchange  
-- Logging, configuration, infrastructure
+- `tagging.py` — keyword-based domain inference & tag extraction
+- Logging, memory tagging, configuration, infrastructure
 
 ## 🧑‍🤝‍🧑 Household Staff — `westmarch/agents/`
 - `jeeves.py`  

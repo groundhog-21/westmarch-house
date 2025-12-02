@@ -4,7 +4,10 @@ from __future__ import annotations
 from westmarch.agents.base_agent import BaseAgent
 from westmarch.core.messages import AgentMessage, TaskType
 from westmarch.core.memory import MemoryBank
+from westmarch.core.messages import Context
 
+from westmarch.core.tagging import infer_tags_from_user_input
+from typing import Optional
 
 
 PENNINGTON_SYSTEM_PROMPT = """
@@ -71,15 +74,47 @@ class MissPenningtonAgent(BaseAgent):
         # Attach the Memory Bank
         self.memory = MemoryBank("westmarch/data/memory.json")
 
+    def run(self, message: AgentMessage) -> str:
+      # Remember the user's original request for tagging
+      self.last_user_input = message.context.original_user_request
+      return super().run(message)
+
     def build_user_content(self, message: AgentMessage) -> str:
         original = message.context.original_user_request or ""
         return (
             f"User request:\n{original}\n\n"
             f"Instruction:\n{message.content}\n"
         )
-    
-    def save_note(self, content: str):
-        self.memory.save_entry(content)
+
+    def save_note(
+        self,
+        content: str,
+        raw_user_input: Optional[str] = None,
+        extra_tags: Optional[list[str]] = None,
+    ) -> None:
+        """
+        Save a note to memory, combining:
+        - domain tags inferred from the raw_user_input (if provided)
+        - otherwise from self.last_user_input (for backward compatibility)
+        - workflow-specific extra_tags (e.g. ['type:parlour'])
+        - the universal 'auto' tag
+        """
+
+        # Prefer explicit raw_user_input; fall back to last_user_input only if needed
+        if raw_user_input is not None:
+            user_input = raw_user_input
+        else:
+            user_input = getattr(self, "last_user_input", None)
+
+        inferred_tags = infer_tags_from_user_input(user_input)
+
+        # Combine inferred domain tags with workflow tags
+        final_tags: list[str] = ["auto"]
+        final_tags.extend(inferred_tags)
+        if extra_tags:
+            final_tags.extend(extra_tags)
+
+        self.memory.save_entry(content, tags=final_tags)
 
     def recall_all(self):
         return self.memory.load_all()

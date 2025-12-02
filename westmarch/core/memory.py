@@ -43,18 +43,79 @@ class MemoryBank:
         log("MEMORY: Save complete")  # <<< ADDED
 
     def save_entry(self, content: str, tags: Optional[List[str]] = None):
-        log(f"MEMORY: Saving note ({len(content.split())} words)")  # <<< ADDED
+        log(f"MEMORY: Saving note ({len(content.split())} words)")
+
+        # ---------- AUTO-TAGGING ----------
+        auto_tags = ["auto"]
+
+        lower = content.lower()
+
+        import re
+
+        # 1. Type classification based on workflow prefixes.
+        if lower.startswith("parlour discussion entry"):
+            type_tag = "type:parlour"
+
+        elif lower.startswith("daily plan created"):
+            type_tag = "type:daily-plan"
+
+        elif lower.startswith("daily plan finalized"):
+            type_tag = "type:daily-plan"
+
+        elif lower.startswith("research performed"):
+            type_tag = "type:research"
+
+        elif lower.startswith("drafted text based"):
+            type_tag = "type:draft"
+
+        elif lower.startswith("critique requested"):
+            type_tag = "type:critique"
+
+        elif lower.startswith("[whole household]"):
+            type_tag = "type:investigation"
+
+        # 2. Historical / archival material (contains years 1000–1999)
+        elif re.search(r"\b(1[0-9]{3})\b", content):
+            type_tag = "type:archive"
+
+        else:
+            type_tag = "type:note"
+
+        auto_tags.append(type_tag)
+
+        # 3. Domain inference (safe and robust)
+        try:
+            from westmarch.orchestrator.workflows import WestmarchOrchestrator
+            domains = list(WestmarchOrchestrator.infer_domains(content))
+            domain_tags = [f"domain:{d}" for d in domains]
+        except Exception:
+            domain_tags = []
+
+        # 4. Merge tags: auto → domain → manual
+        final_tags = auto_tags + domain_tags + (tags or [])
+        # ------------------------------------
 
         data = self._load()
+
+        # Normalise and deduplicate tags while preserving order
+        unique_tags = []
+        if tags:
+            seen = set()
+            for t in tags:
+                if t not in seen:
+                    unique_tags.append(t)
+                    seen.add(t)
+
         entry = {
             "timestamp": datetime.utcnow().isoformat(),
             "content": content.strip(),
-            "tags": tags or [],
+            "tags": unique_tags,
         }
+
         data.append(entry)
         self._save(data)
 
-        log("MEMORY: Note saved successfully")  # <<< ADDED
+        log("MEMORY: Note saved successfully")
 
     def load_all(self) -> List[Dict]:
         return self._load()

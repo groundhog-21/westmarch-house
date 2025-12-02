@@ -1,183 +1,170 @@
-# 🏰 The House of Westmarch  
-### *A Fully Staffed, Mildly Unhinged Multi-Agent Concierge*  
+# 🏰 The House of Westmarch
+### *A Fully Staffed, Mildly Unhinged Multi-Agent Concierge*
 🎩 Jeeves · 📚 Perkins · ✒️ Miss Pennington · 🕯️ Lady Hawthorne · 👤 The Master
 
 ---
 
-## **Project Description**
+## Project Description
 
-**The House of Westmarch** is a narrative-forward, technically complete multi-agent concierge system presented as an Edwardian household. It demonstrates multi-agent orchestration, memory, tool use, critique loops, hybrid LLM usage, an interactive Streamlit UI, and nine in-universe demos that reveal the underlying architecture.
+**The House of Westmarch** is a narrative-driven multi-agent concierge system presented as an Edwardian household. It implements:
 
-Instead of interacting with anonymous “agents,” the user delegates tasks to staff: a butler, a research valet, a secretary, and a critic. Beneath the theatrical presentation is a real, engineered agentic platform.
-
----
-
-## **1. Problem Statement**
-
-Modern users face a continuous stream of small cognitive burdens: planning, research, drafting, summarising, and remembering what was discussed previously. These tasks accumulate until the user becomes, effectively, their own secretary, researcher, editor, and archivist.
-
-The House of Westmarch addresses this by providing specialised staff:
-
-- 🎩 **Jeeves:** planning, orchestration, memory  
-- 📚 **Perkins:** structured research and analysis  
-- ✒️ **Miss Pennington:** drafting and summarisation  
-- 🕯️ **Lady Hawthorne:** critique and evaluation  
-
-This staff reduces cognitive load and reframes multi-agent AI as a comfortable, character-driven experience.
-
----
-
-## **2. Solution Overview**
-
-Westmarch is built around four persona agents, each with a clear role, coordinated by an orchestrator using both **Gemini** and **OpenAI** models. It includes:
-
-- Multi-agent coordination  
+- Multi-agent orchestration  
+- Hybrid LLM usage (Gemini + OpenAI)  
 - Tool-assisted reasoning  
-- Session + long-term memory  
-- Context compaction  
+- A domain-aware memory system  
 - Critique loops  
-- Model switching  
-- A polished Streamlit interface  
+- A Streamlit UI  
 - Nine theatrical demonstrations  
 
-The system provides real capability wrapped inside a narrative of household staff performing their duties.
+Users delegate tasks to household “staff,” who perform real, engineered workflows beneath the polished narrative.
 
 ---
 
-## **3. Agent Roster**
+## 1. Problem Statement
+
+Users face constant cognitive friction in planning, researching, drafting, critiquing, and remembering prior context.
+
+Westmarch reframes these tasks as responsibilities of a household staff:
+
+- 🎩 **Jeeves** — orchestration, planning, memory  
+- 📚 **Perkins** — structured research  
+- ✒️ **Miss Pennington** — drafting and refinement  
+- 🕯️ **Lady Hawthorne** — critique  
+
+This reduces user cognitive load and turns multi-agent AI into a comfortable experience.
+
+---
+
+## 2. Solution Overview
+
+Westmarch integrates:
+
+- Multi-agent coordination  
+- Hybrid Gemini + OpenAI model usage  
+- Persistent memory with domain inference  
+- Tool-assisted reasoning from Perkins  
+- Polished drafting from Pennington  
+- Critique loops from Lady Hawthorne  
+- Structured workflows in an orchestrator  
+- An interactive Streamlit interface  
+
+---
+
+## 3. Agent Roster
 
 ### 🎩 Jeeves — Butler & Orchestrator
-The central coordinator. Jeeves receives all user instructions, decomposes tasks, delegates to other agents, manages memory, and produces daily plans or summaries.
+Handles requests, chooses workflows, delegates tasks, manages memory, and frames final responses.
 
 ### 📚 Perkins — Valet of Scholarly Inquiry
-A research and reasoning agent who uses numbered analyses, external tools, and structured thinking to generate investigations and reports.
+Produces structured investigations, anomaly analyses, and research briefs.
 
 ### ✒️ Miss Pennington — Secretary & Correspondent
-Transforms chaotic notes into refined prose, writes summaries, letters, and digests, and maintains a consistent tone and style.
+Transforms chaotic notes into polished writing and archives events in long-term memory.
 
 ### 🕯️ Lady Hawthorne — Critic-in-Residence
-Powered by OpenAI. Reviews poetry, prose, arguments, and agent output. Provides targeted critique and revision guidance with a sharp editorial voice.
+Powered by OpenAI. Delivers sharp, focused critique in ≤3 sentences.
 
 ---
 
-## **4. Architecture Summary**
+## 4. Architecture Summary
 
-### **4.1 Orchestration Hall — `westmarch/orchestrator/`**
-- `router.py`: determines which agent handles a request  
-- `workflows.py`: defines sequences such as *research → draft → critique*
+### 4.1 Orchestration — `westmarch/orchestrator/`
+- `router.py`: selects workflow  
+- `workflows.py`: defines multi-step agent sequences  
 
-### **4.2 Core Services — `westmarch/core/`**
-- `models.py`: configures Gemini and OpenAI models  
-- `memory.py`: session memory + summarised long-term memory  
-- `messages.py`: internal message schema  
-- `logging.py`: observability and debugging utilities  
+### 4.2 Core Services — `westmarch/core/`
+- `models.py`: Gemini + OpenAI clients  
+- `memory.py`: session + long-term memory  
+- `tagging.py`: domain inference & auto-tagging  
+- `messages.py`: structured messages  
+- `logging.py`: traceable workflow logs  
 
-### **4.3 Agents — `westmarch/agents/`**
-Each agent inherits from a shared base class. Personas are defined through system messages, including tone, capabilities, and tool access.
+### 4.3 Agents — `westmarch/agents/`
+Four personas inheriting from a shared base class.
 
-### **4.4 Memory Layer — `westmarch/data/memory.json`**
-A compacted, summarised memory store enabling agent recall. Supports demonstrations such as “What did I tell you yesterday?”
+### 4.4 Memory Layer — `westmarch/data/memory.json`
+Keyword scoring, tag-based domain inference, top-10 candidate ranking.
 
-### **4.5 Streamlit Front-End — `app.py`**
-The Estate’s public interface. Users select from eight modes:
-- Parlour Discussions (General Conversation)  
+### 4.5 Front-End — `app.py`
+Eight modes mapping directly to workflows:
+- Parlour Discussions  
 - Arrangements for the Day  
 - Matters Requiring Investigation  
 - Correspondence & Drafting  
-- Records & Summaries from the Archive  
-- Her Ladyship’s Critique (Proceed with Caution)  
+- Records from the Archive  
+- Her Ladyship’s Critique  
 - Matters Requiring the Whole Household  
 - Jeeves Remembers  
 
-Each mode maps directly to a workflow in the orchestrator.
+---
+
+## 5. Key Features
+
+- Multi-agent delegation  
+- Sequential + parallel workflows  
+- Tool-augmented research  
+- Long-term memory with domain inference  
+- Critique cycle  
+- Hybrid Gemini/OpenAI use  
+- Strong observability  
+- Interactive UI  
 
 ---
 
-## **5. Features Demonstrated**
+## 6. Demonstrations (1–9)
 
-The House of Westmarch implements key patterns from the Agents Intensive:
+### Demo 1 — Parlour Discussions
+Base persona interactions.
 
-- **Multi-agent delegation** with explicit personas  
-- **Sequential + parallel workflows**  
-- **Tool-assisted reasoning** (Perkins)  
-- **Long-term memory** with summarisation  
-- **Evaluation loop** via a dedicated critic  
-- **Model switching** (Gemini ↔ OpenAI)  
-- **Logging and observability**  
-- **Interactive, stateful UI** in Streamlit  
+### Demo 2 — Arrangements for the Day
+Daily planning.
 
-The system balances technical capability with narrative presentation.
+### Demo 3 — Matters Requiring Investigation
+Structured research (“teacup psychology”).
 
----
+### Demo 4 — Correspondence & Drafting
+Pennington rescues rough notes.
 
-## **6. Demonstrations (1–9)**
+### Demo 5 — Records & Summaries
+Jeeves produces a structured archival summary.
 
-The Estate contains nine in-universe demonstration scripts showcasing the system’s behaviour.
+### Demo 6 — Her Ladyship’s Critique
+Lady Hawthorne critiques “O Languid Moon of Yesteryear.”
 
-### **Demo 1 — Parlour Discussions**  
-Introduction to staff and base conversational patterns.
+### Demo 7 — Misbehaving Garden Gnome
+Multi-agent orchestration and escalation.
 
-### **Demo 2 — Arrangements for the Day**  
-Jeeves constructs a realistic daily plan from rough goals.
+### Demo 8 — Memory Demonstration
+Jeeves retrieves prior events with domain-aware filtering.
 
-### **Demo 3 — Matters Requiring Investigation**  
-Perkins conducts structured analysis (“teacup psychology”), demonstrating tools + reasoning.
-
-### **Demo 4 — Correspondence & Drafting**  
-Miss Pennington converts fragmented notes into polished correspondence.
-
-### **Demo 5 — Records & Summaries**  
-Jeeves produces archival summaries of a mismanaged household project.
-
-### **Demo 6 — Her Ladyship’s Critique**  
-Lady Hawthorne dissects the poem “O Languid Moon of Yesteryear.”
-
-### **Demo 7 — The Case of the Misbehaving Garden Gnome**  
-Full multi-agent orchestration: collaborative reasoning and multi-step flow.
-
-### **Demo 8 — Memory Demonstration**  
-Jeeves retrieves summarised memory entries (“What did I tell you yesterday?”).
-
-### **Demo 9 — A Mystery in the Archives**  
-Flagship demo. Fully automated in Streamlit. Demonstrates:
-- Multi-agent coordination  
-- Looping/iterative investigation  
-- Metadata reasoning  
-- Critique escalation  
-- Model switching  
-- Pause/resume logic  
-- Theatrical narrative  
+### Demo 9 — A Mystery in the Archives
+Flagship demo:
+- looped analysis  
+- metadata reasoning  
+- critique escalation  
+- hybrid model switching  
+- cinematic narrative pacing  
 
 ---
 
-## **7. Value & Impact**
+## 7. Value & Impact
 
-Westmarch shows how a multi-agent system can be made friendly and readable without sacrificing capability.
+### Practical
+- Reliable research  
+- Structured planning  
+- High-quality drafting  
+- Useful critique  
+- Memory-aware coherence  
 
-### Practical Value
-- Reduces planning and cognitive load  
-- Produces higher-quality writing  
-- Structures research  
-- Provides useful critique  
-- Maintains continuity through memory  
-
-### Experiential Value
-- Narrative framing improves user engagement  
-- Characters clarify agent roles  
-- The household metaphor reduces cognitive friction  
-- Streamlit makes the system accessible to non-technical users  
-
-As the staff note:
-
-- 🎩 Jeeves: “The Estate restores dignity to everyday tasks.”  
-- ✒️ Miss Pennington: “No more wrestling with blank pages.”  
-- 📚 Perkins: “Delegation improves clarity.”  
-- 🕯️ Lady Hawthorne: “And the prose improves.”  
+### Experiential
+- Personas reduce cognitive load  
+- Household metaphor clarifies agent roles  
+- Streamlit UI makes the system approachable  
 
 ---
 
-## **8. Conclusion**
+## 8. Conclusion
 
-The House of Westmarch is a complete, narrative-driven multi-agent concierge system demonstrating orchestration, memory, tool use, critique loops, and structured workflows across two LLM platforms. Its Streamlit UI and nine theatrical demos allow users and judges to explore the system interactively.
+The House of Westmarch is a complete, polished multi-agent system demonstrating memory, orchestration, critique, and hybrid reasoning across nine narrative demos.
 
 🕯️ *Lady Hawthorne:* “If this does not satisfy the judges, nothing will.”
