@@ -6,7 +6,7 @@
 [![Kaggle Submission](https://img.shields.io/badge/Kaggle-Submitted-20beff?logo=kaggle&logoColor=white)](https://www.kaggle.com/competitions/agents-intensive-capstone-project)
 [![YouTube Video](https://img.shields.io/badge/YouTube-Video-FF0000?logo=youtube&logoColor=white)](https://www.youtube.com/watch?v=3nJ5RnmqvMk)
 [![GitHub Repo](https://img.shields.io/badge/GitHub-Repository-181717?logo=github)](https://github.com/groundhog-21/westmarch-house)
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.17768826.svg)](https://doi.org/10.5281/zenodo.17768826)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.17786925.svg)](https://doi.org/10.5281/zenodo.17786925)
 
 ---
 
