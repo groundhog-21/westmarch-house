@@ -206,6 +206,7 @@ westmarch-house/
 │   ├── architecture.md
 │   ├── architecture_diagram.md
 │   ├── demo_9_agentic_features_map.md
+│   ├── how_to_run_demos.md
 │   ├── kaggle_writeup.md
 │   ├── memory.md
 │   ├── memory_diagram.md
