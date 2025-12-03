@@ -71,5 +71,22 @@
       "auto",
       "type:parlour"
     ]
+  },
+  {
+    "timestamp": "2025-12-03T08:42:03.830636",
+    "content": "Parlour discussion entry:\n\nUSER SAID:\nGood morning, my dear sir!\n\nJEEVES REPLIED:\nAh, good morning to you as well, sir. I trust you have slept soundly and are feeling refreshed. I have taken the liberty of preparing your morning tea, as you prefer it.",
+    "tags": [
+      "auto",
+      "type:parlour"
+    ]
+  },
+  {
+    "timestamp": "2025-12-03T09:30:14.725290",
+    "content": "Daily plan created based on user request:\n\nREQUEST:\nAh, Jeeves, good man, what is on my calendar for the day today?\n\nPLAN:\nGood morning, madam. It is my pleasure to assist you.\n\nAs you have not provided a specific schedule for today, may I propose the following arrangement for your consideration?\n\n*   **Morning:**\n    *   9:00 AM: A quiet period for correspondence and perusal of the morning papers.\n    *   10:30 AM: A brief consultation with Miss Pennington regarding the household archives.\n*   **Midday:**\n    *   12:30 PM: Luncheon, served at your preferred hour.\n*   **Afternoon:**\n    *   2:00 PM: A review of the estate accounts, should that be convenient.\n    *   3:30 PM: Time for a constitutional in the gardens, weather permitting.\n*   **Evening:**\n    *   6:00 PM: Preparations for dinner.\n    *   7:30 PM: Dinner.\n\nPlease do let me know if this outline meets with your approval, or if you would prefer any adjustments, madam.",
+    "tags": [
+      "auto",
+      "domain:schedule",
+      "type:planning"
+    ]
   }
 ]
