@@ -169,6 +169,20 @@ Fully automated narrative featuring:
 - hybrid model usage  
 - dramatic reveal  
 
+### Why Demo 9 Matters
+
+Demo 9 is a compact showcase of Westmarch’s architectural intent:
+
+- **Multi-agent orchestration** — Jeeves coordinates sequential and parallel rounds.
+- **Tool invocation** — Perkins uses the Archival Metadata Scrutinizer v3.2.
+- **Persona-faithful reasoning** — Each agent contributes within strict boundaries.
+- **Memory-aware behavior** — Both tagging and recall inform final decisions.
+- **Branch-point decisions** — Multiple possible investigation paths exist.
+- **Council synthesis** — The household assembles for a multi-voice deliberation.
+- **Graceful final polish** — Jeeves assembles the finished conclusion.
+
+This format demonstrates not only capability but *maintainability* and *transparency*.
+
 ---
 
 ## 6. Value & Impact

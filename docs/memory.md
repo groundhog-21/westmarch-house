@@ -211,13 +211,20 @@ All notes are considered candidates for scoring.
 
 ------------------------------------------------------------------------
 
-## 5.4 Candidate Scoring (Updated)
+## 5.4 Candidate Scoring
 
-A single scoring rule is used:
+A single, transparent scoring rule is used:
 
-    score = number of user query tokens appearing in entry.content.lower()
+score = number of user query tokens appearing in entry.content.lower()
 
-Notes with score 0 are discarded.
+
+This mechanism is intentionally simple:
+
+- it uses **literal token overlap**, not embeddings  
+- it ensures full transparency in logs  
+- it keeps recall predictable, debuggable, and deterministic  
+
+Entries with a score of **0** are discarded before further filtering.
 
 ------------------------------------------------------------------------
 
@@ -349,3 +356,28 @@ Used for:
 
 -   filtering recall candidates\
 -   generating `domain:*` tags during memory writes
+
+---
+
+# 8. Design Principles of the Memory System
+
+The Westmarch memory architecture follows several guiding principles:
+
+### • Transparency  
+All scoring, tagging, and selection rules are deliberately simple and visible in logs.  
+Judges (and the Patron) can see exactly *why* a memory was selected.
+
+### • Determinism  
+The system avoids probabilistic or embedding-based recall.  
+Every query yields reproducible results based on clear rules.
+
+### • User-Input Purity  
+Tags and domain classifications are derived strictly from **user input**,  
+never from the model’s own generated text.  
+This prevents feedback loops and “hallucinated” memory domains.
+
+### • Narrative Consistency  
+Memory recall is shaped to preserve continuity across Westmarch’s theatrical framing,  
+while remaining technically grounded and constrained.
+
+These principles ensure that the system remains both charmingly narrative and precisely engineered.

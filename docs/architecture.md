@@ -5,7 +5,9 @@ This document describes how the Estate is constructed behind the scenes — with
 
 ---
 
-## 1. High‑Level System View (Verbal Diagram)
+## 1. High‑Level System View
+
+![Architecture Diagram](https://raw.githubusercontent.com/groundhog-21/westmarch-house/main/media/images/architecture_diagram.png)
 
 User 👤 interacts via the **Streamlit UI** in `app.py` →  
 Request is packaged and sent to the **Westmarch Orchestrator** →  

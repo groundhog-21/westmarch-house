@@ -190,6 +190,14 @@ To run the demonstrations locally:
 
 ---
 
+## 🖼️ Streamlit Interface (Screenshot)
+
+A first glimpse inside the Estate — the Streamlit interface with its sidebar of services and guided demo instructions.
+
+![Streamlit UI](media/images/streamlit_ui_for_readme.png)
+
+---
+
 # 🗂️ **Repository Layout**
 
 ```

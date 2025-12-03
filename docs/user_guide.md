@@ -1,214 +1,258 @@
-# 🏰 User Guide  
+# 🏰 User Guide
 ### *A Practical Handbook for Patrons of the Estate*  
-House of Westmarch — Streamlit Interface Guide (Updated)
+House of Westmarch — Streamlit Interface Guide
 
 ---
 
-# 1. Introduction  
-This guide explains how to operate **The House of Westmarch** through the Streamlit interface.  
-It covers:
+## 1. Quick Start
 
-- **Manual operation** for all standard Estate services (Demos 1–8)  
-- **Automatic operation** for *Demo 9 — A Mystery in the Archives*  
-- Navigation, example prompts, and practical notes on interacting with the household staff
+To run the demonstrations locally:
 
-All interactions occur through the sidebar menu inside `app.py`.
+1\. Clone the repository  
+2\. Install dependencies:
+   ```
+   pip install -r requirements.txt
+   ```
+3\. Launch the Streamlit interface:  
+   ```
+   streamlit run app.py
+   ```
+4\. Navigate to the URL printed in your terminal (usually:  
+`http://localhost:8501`).
 
----
+(You will be welcomed by the assembled staff.)
 
-# 2. Using the Interface
 
-## 2.1 Selecting a Mode  
-The sidebar presents the Estate’s available services:
+5\. For manual demos (1–8):  
+   Select the correct sidebar mode and follow the scripted prompts found in  
+   `westmarch/demos_in_universe/`
 
-- **Parlour Discussions (General Conversation)**  
-- **Arrangements for the Day**  
-- **Matters Requiring Investigation**  
-- **Correspondence & Drafting**  
-- **Records & Summaries from the Archive**  
-- **Her Ladyship’s Critique (Proceed with Caution)**  
-- **Matters Requiring the Whole Household**  
-- **Jeeves Remembers**
+6\. For the fully automated flagship demo (Demo 9):  
+   Select **“Matters Requiring the Whole Household”** from the sidebar  
+   and press the button **“▶ Run Demo 9 – A Mystery in the Archives”** near the top of the screen.
 
-Each mode maps to an orchestrated workflow managed by **Jeeves** and the household staff.
-
----
-
-# 3. Two Ways to Use the Estate  
-
-Westmarch supports **two distinct interaction styles**, depending on whether you are exploring the standard demos or running the fully automated Demo 9.
+➡️ Full instructions:  
+[How to Run Demos (1–9)](https://github.com/groundhog-21/westmarch-house/blob/main/docs/how_to_run_demos.md)
 
 ---
 
-# 🟦 Use Case 1 — Manual Operation (Demos 1–8)  
-Use this method for all modes except Demo 9.
+# 2. Welcome to the Estate
 
-## How It Works  
-1. Choose a mode in the **sidebar**.  
-2. Begin a normal chat interaction in the main panel.  
-3. To reenact one of the in-universe demonstrations (Demos 1–8),  
-   open the corresponding `.md` script from:  
-   `westmarch/demos_in_universe/`  
-   and follow the prompts manually in the UI.
+Pray, step through the carved oak doors.  
+Within these venerable walls, your household staff stand at the ready — polished, poised, and quite incapable of refusing a request (no matter how whimsical).
 
----
+Every operation you perform in the Streamlit interface is interpreted as a **summons**.  
+The moment you choose a mode, the staff assemble like clockwork to attend you:
 
-## Example Manual Workflows  
+- 🎩 **Jeeves** — the unflappable butler who routes all matters with immaculate judgment  
+- 📚 **Perkins** — the scholarly valet who produces investigations with an alarming thoroughness  
+- ✒️ **Miss Pennington** — the secretary who makes even chaotic notes appear respectable  
+- 🕯️ **Lady Hawthorne** — whose critiques, though devastating, are always framed with elegance  
 
-### **Parlour Discussions**  
-```
-“Jeeves, kindly introduce the household staff.”
-“Tell me something amusing from the morning papers.”
-```
-
-### **Arrangements for the Day**  
-```
-“My goals today are light errands, one meeting, and quiet reading.”  
-```
-
-### **Matters Requiring Investigation (Perkins)**  
-```
-“Perkins, compare ETFs and mutual funds.”  
-```
-
-### **Correspondence & Drafting (Pennington)**  
-```
-“I need a polite email explaining why my tax form is late.”  
-```
-
-### **Her Ladyship’s Critique**  
-```
-“Lady Hawthorne, your verdict on this paragraph, if you please.”  
-```
+The sidebar is your *keys to the Estate*. Choose a service there, and the servants fall into formation.
 
 ---
 
-# 🟧 Use Case 2 — Automatic Operation (Demo 9 Only)  
-
-**Demo 9 — A Mystery in the Archives** runs **entirely automatically** with a single button press.
-
-## How To Run Demo 9  
-1. In the sidebar, select:  
-   **“Matters Requiring the Whole Household”**  
-2. Press the button labelled:  
-   **“Run Demo 9 — A Mystery in the Archives”**
-
-The entire multi-round narrative unfolds without further input:
-- Pennington → Perkins → Jeeves → Hawthorne  
-- Parallel analysis  
-- Metadata Scrutinizer tool call  
-- Household council  
-- Branching choice  
-- Final discovery and critique  
-
-**No user prompts are required** once the demo begins.
+# 3. The Estate’s Services (A Tour of the Rooms)
+Each room has its own atmosphere — and its own staff member waiting to assist.
 
 ---
 
-# 4. Service Descriptions (Manual Mode)
+## 3.1 Parlour Discussions
+A calm morning room where Jeeves entertains light conversation, introductions, and the occasional philosophical musing.
 
-## 4.1 Parlour Discussions  
-General conversation with **Jeeves** using his lighter Parlour-mode prompt.  
-Perfect for introductions, small talk, and gentle requests.
+>“Jeeves, who exactly lives in this place?”  
+>“Tell me something diverting from the morning papers.”  
 
----
-
-## 4.2 Arrangements for the Day  
-Jeeves constructs structured plans based on:
-- goals  
-- time constraints  
-- preferences  
+Expect good manners and gentle wit.
 
 ---
 
-## 4.3 Matters Requiring Investigation  
-Research and analysis via **Perkins**.  
-Expect structured reasoning, numbered steps, evidence, and clarity.
+## 3.2 Arrangements for the Day
+Enter the Study and Jeeves will draw up your daily plans with military precision (albeit politely concealed under charm).
+
+He takes your rough intentions and hands back a neat, formal itinerary.
 
 ---
 
-## 4.4 Correspondence & Drafting  
-**Miss Pennington** transforms rough notes into refined writing:
-- letters  
-- emails  
-- summaries  
-- outlines  
-- official reports  
+## 3.3 Matters Requiring Investigation
+Here, Perkins emerges from behind a mountain of books, spectacles slightly askew, ready for analysis.
+
+He offers:
+- numbered reasoning
+- comparisons
+- structured reports
+- and occasional academic exasperation
+
+>“Perkins, compare ETFs and mutual funds.”  
 
 ---
 
-## 4.5 Records & Summaries from the Archive  
-Jeeves retrieves historical summaries and past session insights.
+## 3.4 Correspondence & Drafting
+Within the Scriptorium, Miss Pennington awaits — pen lifted, posture perfect.
+
+She can transform:
+- garbled notes
+- frantic bullet points
+- half-formed ideas
+
+…into dignified letters, summaries, or treatises that could plausibly be mailed from an Edwardian estate.
 
 ---
 
-## 4.6 Her Ladyship’s Critique  
-Submit writing for incisive evaluation by **Lady Hawthorne**.  
-Expect elegance, severity, and actionable revision guidance.
+## 3.5 Records & Summaries from the Archive
+A lamp flickers. Jeeves consults the Ledger of Prior Disasters™.
+
+He retrieves:
+- summaries
+- previous instructions
+- personal notes
+- catastrophe reports (beautifully written, of course)
 
 ---
 
-## 4.7 Matters Requiring the Whole Household  
-Supports multi-agent orchestration but is primarily used for  
-**the fully automated Demo 9 experience**.
+## 3.6 Her Ladyship’s Critique
+The Drawing Room is dimly lit.
+Lady Hawthorne looks up, eyebrow already raised.
+
+Submit your prose at your peril.
+
+Her reviews are:
+- incisive
+- elegant
+- merciless
+- and usually correct
+
+>“Lady Hawthorne, your verdict on this paragraph, if you please.”
+
+Brace yourself.
 
 ---
 
-## 4.8 Jeeves Remembers  
-The Estate’s memory system supports:
-- semantic search  
-- weighted keyword scoring  
-- domain inference  
-- agent-hint recognition  
+## 3.7 Matters Requiring the Whole Household
+This is the War Room.
 
-Example prompts:
-```
-“What did I tell you yesterday about my poem?”
-“What were Perkins’s findings about the gnome?”
-“Have we ever discussed investing?”
-```
+When the entire staff must be summoned — for example, to investigate the Mystery in the Archives — this is the mode you choose.
+
+Jeeves coordinates.  
+Pennington drafts.  
+Perkins investigates.  
+Hawthorne critiques.  
+
+Chaos ensues, but in a very organized way.
 
 ---
 
-# 5. Interaction Guidelines
+## 3.8 Jeeves Remembers
+Memory, sir?
+Why yes — the Estate keeps immaculate records.
 
-## 5.1 Tone  
-The staff respond well to polite phrasing but support casual requests too.
+This room allows you to ask:
+
+>“What did I tell you yesterday about my poem?”  
+>“Have we ever discussed investing?”  
+>“What were Perkins’s findings regarding the gnome?”  
+
+Jeeves performs:
+- keyword scoring
+- domain alignment
+- semantic inference
+- polite recollection
+
+All without misplacing his gloves.
 
 ---
 
-## 5.2 Closure Detection  
-To end interactions gracefully, try:
-- “That will be all.”  
-- “Thank you, Jeeves.”  
+# 4. Demonstrations of the Estate
+
+## 4.1 Manual Demonstrations (1–8)
+To reenact the Estate’s scripted dramatics:
+
+1. Select the matching mode in the sidebar
+
+2. Follow the `.md` script in  
+`westmarch/demos_in_universe/`
+
+These reenactments showcase agent behavior in their natural habitat.
+
+---
+
+## 4.2 Automated Demonstration (Demo 9 — *A Mystery in the Archives*)
+Here the Estate performs a fully orchestrated drama without further instruction.
+
+Simply:
+- select **Matters Requiring the Whole Household**
+- press **Run Demo 9**
+
+Thereafter, sit back as:
+- Miss Pennington uncovers clues
+- Perkins investigates anomalies
+- Hawthorne critiques everyone
+- Jeeves attempts to maintain decorum
+
+It is, in all respects, a thoroughly Westmarchian spectacle.
+
+---
+
+# 5. Conversational Etiquette
+
+## 5.1 Tone
+The staff respond well to courtesy, though they will not faint if you speak plainly.
+
+---
+
+## 5.2 Closure Phrases
+To conclude a matter, try:
+- “That will be all.”
+- “Thank you, Jeeves.”
 - “Much obliged.”
 
----
-
-## 5.3 Memory Queries  
-Provide clues when possible:
-- agent name  
-- topic  
-- approximate date  
-- keywords  
+Jeeves recognizes these as polite dismissal.
 
 ---
 
-# 6. Troubleshooting
-
-## 6.1 No Relevant Memory Found  
-Jeeves provides a fallback and may request more detail.
-
----
-
-## 6.2 Ambiguous Queries  
-Clarify with:
-- topic  
-- timing  
-- agent  
-- or domain (finance, poetry, etc.)
+## 5.3 Memory Queries
+Should you ask the Estate to recall something, offering clues helps greatly:
+- agent ("Perkins")
+- topic ("the gnome")
+- date or approximate time
+- keywords
 
 ---
 
-# 7. Conclusion  
-This guide provides everything needed to explore the rooms, agents, services, and stories of the Westmarch Estate — whether manually or through the fully automated Mystery in the Archives.
+# 6. Troubleshooting (Polite Remedies)
+
+### 6.1 When No Memory Is Found
+Jeeves will apologise gently and ask for details.
+He is, after all, only human in spirit.
+
+---
+
+### 6.2 When a Query Is Ambiguous
+Clarify with a topic, agent, or domain:
+
+- finance
+- poetry
+- investigations
+- correspondence
+
+---
+
+### 6.3 When Demo 9 Misbehaves
+Ensure:
+- API keys are correctly in `.env`
+- the demo is allowed to run uninterrupted
+- you do not panic (Perkins will do that for you)
+
+---
+
+# 7. Parting Words
+You now possess all knowledge needed to navigate the Westmarch Estate — its parlours, its archives, its mysteries, and its occasionally exasperated staff.
+
+Whenever you require assistance:
+- 🎩 **Jeeves** will oblige.  
+- 📚 **Perkins** will analyze.  
+- ✒️ **Miss Pennington** will refine.  
+- 🕯️ **Lady Hawthorne** will judge.  
+
+**The staff remain, as ever, at your service.**
