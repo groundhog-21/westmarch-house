@@ -55,5 +55,21 @@
       "investing",
       "markets"
     ]
+  },
+  {
+    "timestamp": "2025-12-02T17:01:25.123667",
+    "content": "Parlour discussion entry:\n\nUSER SAID:\nGood morning, Jeeves!\n\nJEEVES REPLIED:\nGood morning to you, sir. I trust your repose was refreshing. May I offer you your usual morning beverage?",
+    "tags": [
+      "auto",
+      "type:parlour"
+    ]
+  },
+  {
+    "timestamp": "2025-12-03T07:31:51.212209",
+    "content": "Parlour discussion entry:\n\nUSER SAID:\nGood morning, my dear fellow!\n\nJEEVES REPLIED:\nGood morning to you, sir. I trust you slept soundly. May I inquire if you have any particular arrangements in mind for the day?",
+    "tags": [
+      "auto",
+      "type:parlour"
+    ]
   }
 ]

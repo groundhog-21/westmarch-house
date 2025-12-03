@@ -9,216 +9,6 @@ from westmarch.agents.miss_pennington import MissPenningtonAgent
 from westmarch.agents.lady_hawthorne import LadyHawthorneAgent
 from westmarch.core.models import ModelClient
 
-DEMO_9_MESSAGES = [
-    # Scene 1 — The Discovery
-    {
-        "role": "assistant",
-        "content": (
-            "✒️ Pennington: Sir, while preparing the monthly archival index, I discovered "
-            "a parchment filed under *‘Agricultural Affairs → Troublingly Damp Potatoes’.* "
-            "A most improbable classification."
-        ),
-    },
-    {
-        "role": "user",
-        "content": "👤 User: What sort of parchment is it?",
-    },
-    {
-        "role": "assistant",
-        "content": (
-            "✒️ Pennington: A brittle sheet labelled only: "
-            "**‘UNEXPLAINED RATTLING — DO NOT DISTURB.’**  "
-            "Naturally, I disturbed it at once."
-        ),
-    },
-    {
-        "role": "assistant",
-        "content": "🎩 Jeeves: Most intriguing. I shall summon Perkins.",
-    },
-
-    # Scene 2 — Perkins Begins the Investigation
-    {
-        "role": "assistant",
-        "content": (
-            "📚 Perkins: A misfiled parchment with a dire warning. Excellent. "
-            "Miss Pennington: hand it over. I shall examine the metadata immediately."
-        ),
-    },
-    {
-        "role": "assistant",
-        "content": (
-            "✒️ Pennington: The ink trembles — as though the writer’s hand shook with dread."
-        ),
-    },
-    {
-        "role": "assistant",
-        "content": "📚 Perkins: Then let us begin **Parallel Analysis Round 1**.",
-    },
-
-    # Scene 3 — Parallel Agents Activated
-    {
-        "role": "assistant",
-        "content": (
-            "📚 Perkins: I will analyze ink density, tremor frequency, and crumb distribution."
-        ),
-    },
-    {
-        "role": "assistant",
-        "content": "✒️ Pennington: I shall prepare an official Discrepancy Report.",
-    },
-    {
-        "role": "assistant",
-        "content": "🎩 Jeeves: Very good. I shall keep the process orderly.",
-    },
-
-    # Scene 4 — Custom Tool Invocation (narrative only)
-    {
-        "role": "assistant",
-        "content": (
-            "📚 Perkins: Jeeves, activate the **Archival Metadata Scrutinizer**, if you please."
-        ),
-    },
-    {
-        "role": "assistant",
-        "content": (
-            "🧰 Tool (Archival Metadata Scrutinizer v3.2):\n"
-            "Ink dated 1847.\n"
-            "Tremor frequency: pronounced.\n"
-            "Foreign substances: biscuit crumbs (0.7 g).\n"
-            "Ambient dread: moderate."
-        ),
-    },
-    {
-        "role": "assistant",
-        "content": "📚 Perkins: As expected. Biscuit-fear correlation remains strong.",
-    },
-
-    # Scene 5 — Lady Hawthorne Arrives
-    {
-        "role": "assistant",
-        "content": (
-            "🕯️ Hawthorne: My dears, if you require a device to tell you your papers are "
-            "dusty and frightened, perhaps we should install cushions in the archives "
-            "to prevent fainting."
-        ),
-    },
-    {
-        "role": "assistant",
-        "content": "📚 Perkins: I assure Your Ladyship, this is legitimate research.",
-    },
-    {
-        "role": "assistant",
-        "content": (
-            "🕯️ Hawthorne: Perkins, the only legitimate research is into how quickly "
-            "I can leave this conversation."
-        ),
-    },
-
-    # Scene 6 — Investigation Loop 2
-    {
-        "role": "assistant",
-        "content": "📚 Perkins: The metadata envelope for 1847, if you please, Jeeves.",
-    },
-    {
-        "role": "assistant",
-        "content": "🎩 Jeeves: At once, sir.",
-    },
-    {
-        "role": "assistant",
-        "content": (
-            "📚 Perkins: Aha! A record of a rattling chest kept in the Westmarch cellar, "
-            "described only as ‘noisy,’ ‘ominous,’ and ‘containing a turnip of considerable "
-            "menace.’"
-        ),
-    },
-
-    # Scene 7 — Long-Running Pause/Resume Operation (narrative)
-    {
-        "role": "assistant",
-        "content": (
-            "🕯️ Narrator: A sudden metallic **CLANG** echoes through the archives. "
-            "The Automated Card Catalogue Carousel has unmoored itself."
-        ),
-    },
-    {
-        "role": "assistant",
-        "content": (
-            "🎩 Jeeves: Oh dear. That would be the Automated Card Catalogue Carousel. "
-            "It occasionally unmoors itself."
-        ),
-    },
-    {
-        "role": "user",
-        "content": "👤 User: Shall we pause the investigation until the noise settles?",
-    },
-    {
-        "role": "assistant",
-        "content": (
-            "🎩 Jeeves: Very prudent, sir.\n"
-            "**Pausing investigation…**\n"
-            "…\n"
-            "…\n"
-            "**Resuming investigation now.**"
-        ),
-    },
-
-    # Scene 8 — Resolution
-    {
-        "role": "assistant",
-        "content": (
-            "📚 Perkins: The rattling parchment refers to the chest in the cellar — "
-            "the one containing only a cracked vase, a spoon, and a turnip that dried "
-            "into a rather menacing shape."
-        ),
-    },
-    {
-        "role": "assistant",
-        "content": "✒️ Pennington: In other words: harmless.",
-    },
-    {
-        "role": "assistant",
-        "content": (
-            "🎩 Jeeves: Precisely. And at some point, a startled archivist abandoned their "
-            "post and misfiled the warning with the potatoes."
-        ),
-    },
-    {
-        "role": "user",
-        "content": "👤 User: So the mystery is solved?",
-    },
-    {
-        "role": "assistant",
-        "content": "🎩 Jeeves: Entirely, sir.",
-    },
-
-    # Scene 9 — Pennington’s Final Report
-    {
-        "role": "assistant",
-        "content": (
-            "✒️ Pennington:\n"
-            "**Archival Mystery Report – Final Findings**\n\n"
-            "**Cause:** Misfiled warning parchment from 1847.\n"
-            "**Custom Tool Used:** Archival Metadata Scrutinizer v3.2.\n"
-            "**Long-Running Interruption:** Card Catalogue Carousel incident.\n"
-            "**Contributing Factors:** Biscuit crumbs, trembling handwriting, "
-            "potato subdirectory error.\n"
-            "**Resolution:** Reclassified under ‘Persistent Noises.’\n"
-            "**Recommendation:** Reduce biscuit consumption in archives; reconsider "
-            "the Carousel’s freedom of movement."
-        ),
-    },
-
-    # Scene 10 — Hawthorne’s Final Commentary
-    {
-        "role": "assistant",
-        "content": (
-            "🕯️ Hawthorne: Well, you’ve successfully wasted a morning identifying a "
-            "frightened turnip. I suppose congratulations are in order. Now if you’ll "
-            "excuse me, the ficus is behaving suspiciously again."
-        ),
-    },
-]
-
 # ------------------------------------
 # Configuration
 # ------------------------------------
@@ -311,32 +101,61 @@ st.markdown(
         .stChatMessage [data-testid="stAvatarContainer"] {
             border-radius: 50%;
         }
+
+        /* Fix Streamlit sidebar collapse tooltip (“keyb…”) artifact */
+        [data-testid="stSidebar"] [title] {
+            max-width: 0 !important;
+            overflow: hidden !important;
+            white-space: nowrap !important;
+            text-overflow: clip !important;
+            opacity: 0 !important;
+            pointer-events: none;
+        }
+
     </style>
     """,
     unsafe_allow_html=True
 )
 
-
 # -----------------------------
 # Sidebar Controls
 # -----------------------------
 with st.sidebar:
-    st.markdown("## 🏰 The House of Westmarch")
+
+    # Title (safe HTML wrapper to prevent disappearing)
     st.markdown(
-        '<em style="font-family:EB Garamond; font-size:16px;">Pray, command your staff — the estate awaits your direction.</em>',
+        """
+        <div style="padding-bottom:0.5rem;">
+            <h2 style="font-family:EB Garamond; margin-bottom:0;">
+                🏰 The House of Westmarch
+            </h2>
+            <em style="font-family:EB Garamond; font-size:16px; color:#4a4a4a;">
+                Pray, command your staff — the estate awaits your direction.
+            </em>
+        </div>
+        """,
         unsafe_allow_html=True
     )
 
     st.markdown("---")
 
+    # Services heading (wrapped to make it stable)
     st.markdown(
-        '<h3 style="font-family:EB Garamond; font-weight:600;">The Estate\'s Available Services:</h3>',
+        """
+        <div style="padding-top:0.3rem;">
+            <h3 style="font-family:EB Garamond; font-weight:600; margin-top:0;">
+                The Estate's Available Services:
+            </h3>
+        </div>
+        """,
         unsafe_allow_html=True
     )
 
+    # Mode selector
     mode = st.radio(
         "Choose Mode",
         [
+            "📜 Instructions for Running the Demos",
             "Parlour Discussions (General Conversation)",
             "Arrangements for the Day",
             "Matters Requiring Investigation",
@@ -344,17 +163,19 @@ with st.sidebar:
             "Records & Summaries from the Archive",
             "Her Ladyship's Critique (Proceed with Caution)",
             "Matters Requiring the Whole Household",
-            "Jeeves Remembers",
+            "Jeeves Remembers",          
         ],
         label_visibility="collapsed",
     )
 
     st.markdown("---")
-    
+
+
     # Clear conversation button
     if st.button("🔄 Clear Conversation"):
         st.session_state.messages = []
         st.rerun()
+
 
 # -----------------------------
 # Mode-Specific UI (Before Prompt)
@@ -376,7 +197,71 @@ if mode == "Matters Requiring the Whole Household":
             ]
 
         st.rerun()
+
+
+# -----------------------------
+# Demo Instructions Page
+# -----------------------------
+if mode == "📜 Instructions for Running the Demos":
+    st.header("📜 Instructions for Running the Demos")
+
+    st.markdown(
+        """
+        This page provides quick instructions for running Demonstrations 1–9 of the House of Westmarch.
         
+        For the full guide, please see:
+        """
+    )
+
+    # Link to full Markdown file in docs/
+    st.link_button("📄 Open Full How-To Guide", "/static/how_to_run_demos.md")
+
+    st.markdown("---")
+
+    # Demo 9 section
+    st.subheader("🎭 Automated Demo (Demo 9)")
+    st.markdown(
+        """
+        1. Select **Matters Requiring the Whole Household** in the sidebar  
+        2. Click **Run Demo 9 – A Mystery in the Archives**  
+        3. No further input required  
+        """
+    )
+
+    st.markdown("---")
+
+    # Manual demos section
+    st.subheader("📝 Manual Demonstrations (Demos 1–8)")
+    st.markdown(
+        """
+        To run the manual demos:
+
+        1. Select the correct sidebar mode  
+        2. Open the matching script in `westmarch/demos_in_universe/`  
+        3. Type each scripted prompt into the chat window  
+        """
+    )
+
+    # Script links inside expanders
+    with st.expander("📚 View Demo Scripts"):
+        st.markdown(
+            """
+            - [demo01_parlour_discussion.md](https://github.com/groundhog-21/westmarch-house/blob/main/westmarch/demos_in_universe/demo01_parlour_discussion.md)  
+            - [demo02_daily_arrangements.md](https://github.com/groundhog-21/westmarch-house/blob/main/westmarch/demos_in_universe/demo02_daily_arrangements.md)  
+            - [demo03_matter_requiring_investigation.md](https://github.com/groundhog-21/westmarch-house/blob/main/westmarch/demos_in_universe/demo03_matter_requiring_investigation.md)  
+            - [demo04_correspondence_and_drafting.md](https://github.com/groundhog-21/westmarch-house/blob/main/westmarch/demos_in_universe/demo04_correspondence_and_drafting.md)  
+            - [demo05_records_and_summaries.md](https://github.com/groundhog-21/westmarch-house/blob/main/westmarch/demos_in_universe/demo05_records_and_summaries.md)  
+            - [demo06_her_ladyships_critique.md](https://github.com/groundhog-21/westmarch-house/blob/main/westmarch/demos_in_universe/demo06_her_ladyships_critique.md)  
+            - [demo07_multi_agent_garden_gnome.md](https://github.com/groundhog-21/westmarch-house/blob/main/westmarch/demos_in_universe/demo07_multi_agent_garden_gnome.md)  
+            - [demo08_memory_continuity.md](https://github.com/groundhog-21/westmarch-house/blob/main/westmarch/demos_in_universe/demo08_memory_continuity.md)  
+            - [demo09_a_mystery_in_the_archives.md](https://github.com/groundhog-21/westmarch-house/blob/main/westmarch/demos_in_universe/demo09_a_mystery_in_the_archives.md)   
+            """
+        )
+
+    # Early return to avoid showing chat UI
+    st.stop()
+
+
 # -----------------------------
 # Display Conversation History
 # -----------------------------

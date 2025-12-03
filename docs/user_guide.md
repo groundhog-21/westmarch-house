@@ -46,8 +46,9 @@ Use this method for all modes except Demo 9.
 ## How It Works  
 1. Choose a mode in the **sidebar**.  
 2. Begin a normal chat interaction in the main panel.  
-3. If you wish to reenact one of the in-universe demonstrations (Demos 1–8),  
-   open the corresponding `.md` script from `westmarch/demos_in_universe/`  
+3. To reenact one of the in-universe demonstrations (Demos 1–8),  
+   open the corresponding `.md` script from:  
+   `westmarch/demos_in_universe/`  
    and follow the prompts manually in the UI.
 
 ---
@@ -84,7 +85,7 @@ Use this method for all modes except Demo 9.
 
 # 🟧 Use Case 2 — Automatic Operation (Demo 9 Only)  
 
-**Demo 9 — A Mystery in the Archives** runs **entirely automatically** with one button press.
+**Demo 9 — A Mystery in the Archives** runs **entirely automatically** with a single button press.
 
 ## How To Run Demo 9  
 1. In the sidebar, select:  
@@ -113,7 +114,7 @@ Perfect for introductions, small talk, and gentle requests.
 ---
 
 ## 4.2 Arrangements for the Day  
-Jeeves constructs structured daily plans based on:
+Jeeves constructs structured plans based on:
 - goals  
 - time constraints  
 - preferences  
@@ -122,12 +123,12 @@ Jeeves constructs structured daily plans based on:
 
 ## 4.3 Matters Requiring Investigation  
 Research and analysis via **Perkins**.  
-Expect structured reasoning, numbered points, clear evidence, and factual grounding.
+Expect structured reasoning, numbered steps, evidence, and clarity.
 
 ---
 
 ## 4.4 Correspondence & Drafting  
-**Miss Pennington** transforms rough notes into polished writing:
+**Miss Pennington** transforms rough notes into refined writing:
 - letters  
 - emails  
 - summaries  
@@ -137,31 +138,30 @@ Expect structured reasoning, numbered points, clear evidence, and factual ground
 ---
 
 ## 4.5 Records & Summaries from the Archive  
-Jeeves retrieves useful summaries from past interactions or session notes.
+Jeeves retrieves historical summaries and past session insights.
 
 ---
 
 ## 4.6 Her Ladyship’s Critique  
-Submit writing for an incisive evaluation by **Lady Hawthorne**.  
-Expect wit, elegance, and actionable revision guidance.
+Submit writing for incisive evaluation by **Lady Hawthorne**.  
+Expect elegance, severity, and actionable revision guidance.
 
 ---
 
 ## 4.7 Matters Requiring the Whole Household  
-In manual mode, you may orchestrate a multi-agent task manually.  
-In practice, this menu item is **reserved for Demo 9’s automated run-through**.
+Supports multi-agent orchestration but is primarily used for  
+**the fully automated Demo 9 experience**.
 
 ---
 
 ## 4.8 Jeeves Remembers  
-The Estate’s memory system provides:
+The Estate’s memory system supports:
 - semantic search  
-- keyword scoring  
+- weighted keyword scoring  
 - domain inference  
-- agent hint recognition  
-- recall of Pennington-archived events  
+- agent-hint recognition  
 
-Examples:
+Example prompts:
 ```
 “What did I tell you yesterday about my poem?”
 “What were Perkins’s findings about the gnome?”
@@ -173,26 +173,23 @@ Examples:
 # 5. Interaction Guidelines
 
 ## 5.1 Tone  
-The staff respond well to polite, natural phrasing, but are fully capable of casual conversation.
+The staff respond well to polite phrasing but support casual requests too.
 
 ---
 
 ## 5.2 Closure Detection  
-To gracefully end a conversation, you may say:
-- “Thank you, Jeeves.”  
+To end interactions gracefully, try:
 - “That will be all.”  
+- “Thank you, Jeeves.”  
 - “Much obliged.”
-
-Jeeves will retire with decorum.
 
 ---
 
 ## 5.3 Memory Queries  
-Memory queries trigger Jeeves’s advanced recall method.  
 Provide clues when possible:
-- agent involved  
+- agent name  
 - topic  
-- approximate time  
+- approximate date  
 - keywords  
 
 ---
@@ -200,18 +197,18 @@ Provide clues when possible:
 # 6. Troubleshooting
 
 ## 6.1 No Relevant Memory Found  
-Jeeves provides a gentle fallback and may request further detail.
+Jeeves provides a fallback and may request more detail.
 
 ---
 
 ## 6.2 Ambiguous Queries  
-If a request is unclear, try specifying:
+Clarify with:
 - topic  
-- an approximate date  
-- agent name  
-- domain (finance, poetry, planning, etc.)  
+- timing  
+- agent  
+- or domain (finance, poetry, etc.)
 
 ---
 
 # 7. Conclusion  
-This guide equips you with everything needed to explore the rooms, agents, services, and stories of the Westmarch Estate — whether through manual direction of the staff or the fully automated Mystery in the Archives.
+This guide provides everything needed to explore the rooms, agents, services, and stories of the Westmarch Estate — whether manually or through the fully automated Mystery in the Archives.
