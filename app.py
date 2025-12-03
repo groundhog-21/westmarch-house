@@ -214,7 +214,10 @@ if mode == "📜 Instructions for Running the Demos":
     )
 
     # Link to full Markdown file in docs/
-    st.link_button("📄 Open Full How-To Guide", "/static/how_to_run_demos.md")
+    st.link_button(
+    "📄 Open Full How-To Guide",
+    "https://github.com/groundhog-21/westmarch-house/blob/main/docs/how_to_run_demos.md"
+)
 
     st.markdown("---")
 

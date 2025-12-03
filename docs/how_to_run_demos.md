@@ -3,7 +3,7 @@
 
 ---
 
-# 🟧 Demo 9 — Fully Automated
+# 🏰 Demo 9 — Fully Automated
 
 1. Launch the app:
    ```bash
@@ -18,7 +18,7 @@
 
 ---
 
-# 🟦 Demos 1–8 — Manual Scripted Demonstrations
+# 🪶 Demos 1–8 — Manual Scripted Demonstrations
 
 These demos are **not automatic**.  
 You reproduce them by typing the scripted lines from the `.md` files into the Streamlit UI.

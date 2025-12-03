@@ -28,7 +28,7 @@ for the Kaggle · Community Hackathon · Agents Intensive - Capstone Project
 **📺 YouTube (2 minutes):**  
 https://youtu.be/3nJ5RnmqvMk
 
-*A short guided tour of the Estate, its capabilities, and its household staff.*
+*A short guided tour of the Estate, its architecture, and its household staff.*
 
 ---
 
@@ -85,21 +85,39 @@ The Estate is organised into several halls and chambers:
 - `tagging.py` — keyword-based domain inference & tag extraction
 - Logging, memory tagging, configuration, infrastructure
 
-## 🧑‍🤝‍🧑 Household Staff — `westmarch/agents/`
-- `jeeves.py`  
-- `perkins.py`  
-- `miss_pennington.py`  
-- `lady_hawthorne.py`  
-- `base_agent.py`
+## 🪶 Household Staff — `westmarch/agents/`
+- 🎩 `jeeves.py`  
+- 📚 `perkins.py`  
+- ✒️ `miss_pennington.py`  
+- 🕯️ `lady_hawthorne.py`  
+- 🧱 `base_agent.py`
 
-## 🎞️ Demonstrations
-- `westmarch/demos/` — technical demonstrations  
-- `westmarch/demos_in_universe/` — narrative theatrical demos (1–9)
+## 🗂️ Documentation  
 
-For detailed diagrams and notes, see:  
-`docs/architecture.md`  
-`docs/memory.md`  
-`docs/personas.md`
+For detailed diagrams and notes, see `docs/`:  
+- `architecture.md`
+- `architecture_diagram.md`
+- `demo_9_agentic_features_map.md`
+- `how_to_run_demos.md`
+- `kaggle_writeup.md`
+- `memory.md`
+- `memory_diagram.md`
+- `personas.md`
+- `personas_diagram.md`
+- `user_guide.md`
+
+## 🖼️ Imagery
+
+For selected images, see `media/images/`:
+- `architecture_diagram.png`
+- `demo_9_agentic_features.png`
+- `memory_diagram.png`
+- `personas_diagram.png`
+- `personas_jeeves_diagram.png`
+- `westmarch_crest.png`
+- `westmarch_crest_unframed.png`
+- `westmarch_persona_roles.png`
+- `westmarch_task_routing.png`
 
 ---
 
@@ -138,20 +156,37 @@ Located in `westmarch/demos_in_universe/`:
 - API keys for **Gemini** and **OpenAI** stored in `.env`  
 - A virtual environment is recommended  
 
-## **Install dependencies**
-```bash
-pip install -r requirements.txt
-```
+---
 
-## **Launch the Household**
-```bash
-streamlit run app.py
-```
+## 📘 Quick Start
 
-Navigate to the URL printed in your terminal (usually:  
+To run the demonstrations locally:
+
+1\. Clone the repository  
+2\. Install dependencies:
+   ```
+   pip install -r requirements.txt
+   ```
+3\. Launch the Streamlit interface:  
+   ```
+   streamlit run app.py
+   ```
+4\. Navigate to the URL printed in your terminal (usually:  
 `http://localhost:8501`).
 
-You will be welcomed by the assembled staff.
+(You will be welcomed by the assembled staff.)
+
+
+5\. For manual demos (1–8):  
+   Select the correct sidebar mode and follow the scripted prompts found in  
+   `westmarch/demos_in_universe/`
+
+6\. For the fully automated flagship demo (Demo 9):  
+   Select **“Matters Requiring the Whole Household”** from the sidebar  
+   and press the button **“▶ Run Demo 9 – A Mystery in the Archives”** near the top of the screen.
+
+➡️ Full instructions:  
+[How to Run Demos (1–9)](https://github.com/groundhog-21/westmarch-house/blob/main/docs/how_to_run_demos.md)
 
 ---
 
@@ -216,7 +251,7 @@ The full competition narrative is located in:
 docs/kaggle_writeup.md
 ```
 
-It covers:
+This file is the primary document evaluated by Kaggle reviewers. It covers:
 
 - System design  
 - Orchestration architecture  
