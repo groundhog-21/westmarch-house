@@ -190,7 +190,7 @@ To run the demonstrations locally:
 
 ---
 
-## 🖼️ Streamlit Interface (Screenshot)
+## 🖼️ Streamlit UI (Screenshot)
 
 A first glimpse inside the Estate — the Streamlit interface with its sidebar of services and guided demo instructions.
 
