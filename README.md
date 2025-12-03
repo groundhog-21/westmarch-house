@@ -54,7 +54,7 @@ On the surface, it is simply a well-run Estate.
 
 Upon launching the Estate, you will be greeted by the sidebar selector:
 
-### **Choose Mode**
+## **Choose Mode**
 - Parlour Discussions (General Conversation)  
 - Arrangements for the Day  
 - Matters Requiring Investigation  
@@ -137,7 +137,7 @@ Located in `westmarch/demos_in_universe/`:
 8. Memory Demonstration — “What Did I Tell You Yesterday?”  
 9. **A Mystery in the Archives** — fully automated Streamlit demonstration  
 
-### Demo 9 specifically showcases:
+## Demo 9 specifically showcases:
 - multi-agent orchestration  
 - looped reasoning cycles  
 - tool invocation  
@@ -158,7 +158,7 @@ Located in `westmarch/demos_in_universe/`:
 
 ---
 
-## 📘 Quick Start
+# 📘 Quick Start
 
 To run the demonstrations locally:
 
@@ -190,7 +190,7 @@ To run the demonstrations locally:
 
 ---
 
-## 🖼️ Streamlit UI (Screenshot)
+# 🖼️ Streamlit UI (Screenshot)
 
 A first glimpse inside the Estate — the Streamlit interface with its sidebar of services and guided demo instructions.
 
